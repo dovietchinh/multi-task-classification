@@ -198,48 +198,52 @@ class MobileNetV2(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
 
-    def _preprocessing(self,img):
-        """[summary]
+    def predict(self,x):
+        out = self(x)
+        out = torch.nn.Softmax(1)(out)
+        return out
+    # def _preprocessing(self,img):
+    #     """[summary]
 
-        Args:
-            img ([type]): nd.array , torch.Tensor , 
+    #     Args:
+    #         img ([type]): nd.array , torch.Tensor , 
 
-        Returns:
-            torch.Tensor in shape [Batch_size, 3,224,224]
-        """
-        assert type(img) in [str,np.array,torch.Tensor], 'Invalid type of inputs'
-        if isinstance(img,np.array):
-            img = torch.Tensor(img)
-        if isinstance(img,torch.Tensor):   # img is Tensor type
-            channel_first = (img.shape[-1]!=3)       
-            if img.dim() ==3:
-                img = img.unsqueeze(dim=0)
-            if not channel_first:
-                img = img.transpose(-1,-3).transpose(-1,-2)
-                img = img/255.
-            return img
-        elif isinstance(img,str):
-            img = cv2.imread(img, cv2.IMREAD_COLOR)    
-            assert img is not None, "file doesn't exist"
-            img = np.transpose(img, [2,0,1])
-            img = np.expand_dims(img, axis=0)
-            img = img.astype('float')/255.
-            img = torch.Tensor(img)
-            return img
+    #     Returns:
+    #         torch.Tensor in shape [Batch_size, 3,224,224]
+    #     """
+    #     assert type(img) in [str,np.array,torch.Tensor], 'Invalid type of inputs'
+    #     if isinstance(img,np.array):
+    #         img = torch.Tensor(img)
+    #     if isinstance(img,torch.Tensor):   # img is Tensor type
+    #         channel_first = (img.shape[-1]!=3)       
+    #         if img.dim() ==3:
+    #             img = img.unsqueeze(dim=0)
+    #         if not channel_first:
+    #             img = img.transpose(-1,-3).transpose(-1,-2)
+    #             img = img/255.
+    #         return img
+    #     elif isinstance(img,str):
+    #         img = cv2.imread(img, cv2.IMREAD_COLOR)    
+    #         assert img is not None, "file doesn't exist"
+    #         img = np.transpose(img, [2,0,1])
+    #         img = np.expand_dims(img, axis=0)
+    #         img = img.astype('float')/255.
+    #         img = torch.Tensor(img)
+    #         return img
 
-    def _predict(self,x):
-        output = model(x) 
-        return output
+    # def _predict(self,x):
+    #     output = model(x) 
+    #     return output
 
-    def _post_processing(x):
-        x = x.reshape(-1,4)
-        x = torch.argmax(x,axis=-1)
-        return x
+    # def _post_processing(x):
+    #     x = x.reshape(-1,4)
+    #     x = torch.argmax(x,axis=-1)
+    #     return x
     
-    def inference(img):
-        output = self._preprocessing(img)
-        output = self._predict(output)
-        output = self._post_processing(output)
-        return output
+    # def inference(img):
+    #     output = self._preprocessing(img)
+    #     output = self._predict(output)
+    #     output = self._post_processing(output)
+    #     return output
 
     

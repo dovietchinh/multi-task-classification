@@ -35,13 +35,6 @@ def policy_v0():
   ]
   return policy
 
-
-
-
-# def parse_level():
-
-
-
 def mixup(img1,img2,factor):
     img = img1.astype('float')* factor + img2.astype('float') * (1-factor)
     img = np.clip(img, 0,255)
@@ -53,7 +46,7 @@ def augment_fliplr(img,level):
         return np.fliplr(img)
     return img 
 
-def augment_hsv(im, level = None,hgain=0.2, sgain=0.2, vgain=0.2):
+def augment_hsv(im, level = None,hgain=0.015, sgain=0.7, vgain=0.4):
     im = im.copy()
     # HSV color-space augmentation
     if hgain or sgain or vgain:
@@ -69,6 +62,7 @@ def augment_hsv(im, level = None,hgain=0.2, sgain=0.2, vgain=0.2):
         im_hsv = cv2.merge((cv2.LUT(hue, lut_hue), cv2.LUT(sat, lut_sat), cv2.LUT(val, lut_val)))
         cv2.cvtColor(im_hsv, cv2.COLOR_HSV2BGR, dst=im)  # no return needed
     return im_hsv
+
 def hist_equalize(im, clahe=True, bgr=True):
     im = im.copy()
     # Equalize histogram on BGR image 'im' with im.shape(n,m,3) and range 0-255
@@ -190,6 +184,59 @@ def rotate(image, angle=45, center = None, scale = 1.0):
 
     return rotated
 
+def cut_25_under(img,ratio=0.25):
+    height,width,_ = img.shape
+    new_height = int((1-ratio)*height)
+    img_ = img[:new_height,:,:]
+    
+    height,width,_ = img_.shape 
+    if height > width :
+                img2 = np.pad(img_,[[0,0],[(height-width)//2,(height-width)//2],[0,0]],mode='constant',constant_values=255)
+    else:
+                img2 = np.pad(img_,[[(width-height)//2,(width-height)//2],[0,0],[0,0]],mode='constant',constant_values=255)
+    img2 = cv2.resize(img2,(224,224))
+    return img2
+
+def cut_25_above(img,ratio=0.25):
+    height,width,_ = img.shape
+    new_height = int(ratio*height)
+    img_ = img[new_height:,:,:]
+    
+    height,width,_ = img_.shape 
+    if height > width :
+                img2 = np.pad(img_,[[0,0],[(height-width)//2,(height-width)//2],[0,0]],mode='constant',constant_values=255)
+    else:
+                img2 = np.pad(img_,[[(width-height)//2,(width-height)//2],[0,0],[0,0]],mode='constant',constant_values=255)
+    img2 = cv2.resize(img2,(224,224))
+    return img2
+
+def cut_25_right(img,ratio=0.25):
+    height,width,_ = img.shape
+    new_width = int((1-ratio)*width)
+    img_ = img[:,:new_width,:]
+    height,width,_ = img_.shape 
+    if height > width :
+                img2 = np.pad(img_,[[0,0],[(height-width)//2,(height-width)//2],[0,0]],mode='constant',constant_values=255)
+    else:
+                img2 = np.pad(img_,[[(width-height)//2,(width-height)//2],[0,0],[0,0]],mode='constant',constant_values=255)    
+    img2 = cv2.resize(img2,(224,224))
+    return img2
+
+def cut_25_left(img,ratio=0.25):
+    height,width,_ = img.shape
+    new_width = int(ratio*width)
+    img_ = img[:,new_width:,:]
+    height,width,_ = img_.shape 
+    if height > width :
+                img2 = np.pad(img_,[[0,0],[(height-width)//2,(height-width)//2],[0,0]],mode='constant',constant_values=255)
+    else:
+                img2 = np.pad(img_,[[(width-height)//2,(width-height)//2],[0,0],[0,0]],mode='constant',constant_values=255)    
+    img2 = cv2.resize(img2,(224,224))
+    return img2    
+
+
+
+
 AUGMENT_FUNCTION = {
     # 'mixup' : mixup,
     'fliplr' : augment_fliplr,
@@ -206,67 +253,74 @@ AUGMENT_FUNCTION = {
     'translateY' : translate_y,
     # 'sharpness' : sharpness,
     'cutout' : cutout,
-    'rotate' : rotate
+    'rotate' : rotate,
+    'cut_25_left' : cut_25_left,
+    'cut_25_right': cut_25_right,
+    'cut_25_above': cut_25_above,
+    'cut_25_under': cut_25_under
     # 'random_crop':random_crop
 }
 ARGS_LIMIT = {
     'fliplr' : [0,1],
     'augment_hsv': [0,1],
     'hist_equalize' : [0,1],
-    # 'solarize' : solarize,
-    # 'posterize': posterize,
+    'solarize' : [100,200],
+    'posterize': [2,6],
     'adjust_brightness': [0.5,1.5],
     # 'invert' : invert,
     'contrast': [0.5,1.5],
     'shearX' : [-0.5,0.5],
-    'shearY' : [-0.5,-0.5],
-    'translateX' : [-0.4,-0.4],
-    'translateY' : [-0.4,-0.4],
+    'shearY' : [-0.5,0.5],
+    'translateX' : [-0.4,0.4],
+    'translateY' : [-0.4,0.4],
     # 'sharpness' : sharpness,
     'cutout' : [0.1,0.3],
-    'rotate' : [-45,45]
+    'rotate' : [-45,45],
+    'cut_25_left' : [0.05,0.25],
+    'cut_25_right': [0.05,0.25],
+    'cut_25_above': [0.05,0.25],
+    'cut_25_under': [0.05,0.25]
     # 'random_crop':random_crop
 }
-
 
 def preprocess(img,img_size,padding=True):
     if padding:
         height,width,_ = img.shape 
         delta = height - width 
+        
         if delta > 0:
             img = np.pad(img,[[0,0],[delta//2,delta//2],[0,0]], mode='constant',constant_values =255)
         else:
-            img = np.pad(img,[[delta//2,delta//2],[0,0],[0,0]], mode='constant',constant_values =255)
+            img = np.pad(img,[[-delta//2,-delta//2],[0,0],[0,0]], mode='constant',constant_values =255)
     if isinstance(img_size,int):
         img_size = (img_size,img_size)
     return cv2.resize(img,img_size)
 
 class RandAugment:
 
-    def __init__(self, num_layers=2,):
+    def __init__(self, num_layers=3,):
         self.num_layers = num_layers
-        self.policy = list(AUGMENT_FUNCTION.keys()
+        self.policy = list(AUGMENT_FUNCTION.keys())
     
     def __call__(self,img):
         # print(self.policy)
         augmenters = random.choices(self.policy, k=self.num_layers)
-        print(augmenters)
+        # print(augmenters)
         for augmenter in augmenters:
-            
             level = random.random()
-            print(level)
-            # level = 0.5
+            
+            # level = 0.8
             min_arg,max_arg = ARGS_LIMIT[augmenter]
+            # print(level)
             level = min_arg + (max_arg - min_arg) * level
+            # print(level)
             img = AUGMENT_FUNCTION[augmenter](img,level)
         return img 
 
-
-
-if __name__ =='__main__':
-    img_org = cv2.imread('/u01/Intern/chinhdv/github/yolov5_0509/runs/MILKa/crops/Sua/0aee8754d1.jpg')
-    augmenter = RandAugment(list(AUGMENT_FUNCTION.keys()))
-    for _ in range(30):
+def augmentation_test():
+    img_org = cv2.imread('/u01/Intern/chinhdv/code/M_classification_torch/test_dog.jpg')
+    augmenter = RandAugment(num_layers=1)
+    for _ in range(10000):
         img_aug = augmenter(img_org)
         img_pad = preprocess(img_aug,224)
         cv2.imshow('a',img_org)
@@ -274,3 +328,6 @@ if __name__ =='__main__':
         cv2.imshow('c',img_pad)
         if cv2.waitKey(0)==ord('q'):
             exit()
+
+if __name__ =='__main__':
+    augmentation_test()

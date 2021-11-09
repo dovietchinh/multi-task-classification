@@ -1,0 +1,10 @@
+DATA_FOLDER : /u01/Intern/chinhdv/DATA/milk/all_crop_data_origin
+train_csv : /u01/Intern/chinhdv/code/M_classification_torch/76classes_train_1103.csv
+val_csv: /u01/Intern/chinhdv/code/M_classification_torch/76classes_val_1103.csv
+
+nc : 76 # number classes ( if multi-output specific number_classes in a list. eg: [2,4,5])
+
+# classes : ['pet','teddy_bear','human','other']
+classes : 
+	age: 0-18, 18-55, 55+
+	gender: female,male

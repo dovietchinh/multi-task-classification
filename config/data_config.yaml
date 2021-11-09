@@ -1,7 +1,0 @@
-DATA_FOLDER : ../
-train_csv : train.csv
-val_csv: val.csv
-
-nc : 4
-
-classes : ['pet','teddy_bear','human','other']
