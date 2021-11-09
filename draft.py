@@ -18,7 +18,7 @@ def preprocess(img,img_size,padding=True):
         img_size = (img_size,img_size)
     return cv2.resize(img,img_size)
 		
-# folder = '/u01/Intern/Freelance_DaNang/res'
+folder = '/u01/Intern/Freelance_DaNang/res'
 
 model = MobileNetV2(76)
 model.load_state_dict(torch.load('result/runs_m/last.pt')['state_dict'])
@@ -36,11 +36,15 @@ for root,dirs,files in os.walk(folder):
 		img = np.expand_dims(img,axis=0)
 		img = torch.Tensor(img)
 		out = model.predict(img)
-		out = torch.argmax(out,axis=-1)
+		out,score = torch.argmax(out,axis=-1),torch.max(out,axis=-1)
+		score =score[0].item()
+		# print(type(score))
 		name = labels[str(out[0].item())][-1]
 		name = name.replace('/','_')
 		index +=1
-		new_name = os.path.join('result3',name,'{:04d}.png'.format(index))
+		new_name = os.path.join('result5',name,'{:04d}_{}.png'.format(index,score))
+		if score <0.95:
+			new_name = os.path.join('result5','unknow','{:04d}_{}.png'.format(index,score))
 		os.makedirs(os.path.dirname(new_name), exist_ok=True)
 		shutil.copy(path,new_name)
 		print(index,end='\r')

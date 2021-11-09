@@ -24,7 +24,7 @@ def preprocess(img,img_size,padding=True):
 
 class LoadImagesAndLabels(torch.utils.data.Dataset):
     
-    def __init__(self, csv, data_folder, img_size, padding, preprocess=False, augment=False,num_layers=2):
+    def __init__(self, csv, data_folder, img_size, padding, preprocess=False, augment=False,augment_params):
         self.csv_origin = csv 
         self.data_folder = data_folder 
         self.augment = augment 
@@ -32,7 +32,7 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         self.padding = padding
         self.img_size = img_size
         if augment:
-            self.augmenter = RandAugment(num_layers=num_layers)
+            self.augmenter = RandAugment(num_layers=num_layers,augment_params)
         if augment:
             self.on_epoch_end()        
         else:

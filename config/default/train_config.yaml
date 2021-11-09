@@ -1,3 +1,18 @@
+model_name : 'mobilenet_v2'
+
+# model_name must be in following list:
+#     - mobilenet_v2
+#     - resnet18
+#     - resnet34
+#     - resnet50
+#     - resnet101
+#     - resnet152
+#     - resnext50_32x4d
+#     - resnext101_32x8d
+#     - wide_resnet50_2
+#     - wide_resnet101_2
+
+
 img_size : 224
 padding : True
 weights : /u01/Intern/chinhdv/code/M_classification_torch/runs_m/last.pt
@@ -22,36 +37,37 @@ hyp:   #hyper parameters
 
 
 #augment params
-
-hsv : 
-  hgain : 0.5
-  sgain : 0.5
-  vgain : 0.5
+augment_params:
+  num_layers : 2
+  # augment_hsv : 
+  #   hgain : 0.5
+  #   sgain : 0.5
+  #   vgain : 0.5
 
 
 # geometric augmentation
 
-fliplr: 0.5
-rotate: 
-  angle : 45, #(degree)
-  mode : reflect, # or constant
-  border_constant: [255,255,255]
+  fliplr: [0.5 ,0.5]
+  rotate: [-45,45 ]
 
-ShearX : 3 
-ShearY : 4
-TranslateX : 2
-TranslateY : 2
-Sharpness : 
+  shearX : [-0.5,0.5 ]
+  shearY : [-0.5,0.5]
+  translateX : [-0.4,0.4]
+  translateY : [-0.4,0.4]
+  Sharpness : 
+  cut_25_left: [0.05,0.25]
+  cut_25_right: [0.05,0.25]
+  cut_25_above: [0.05,0.25]
+  cut_25_under: [0.05,0.25]
+  cutout: [0.1,0.3]
 
 # photometric augmentation
 
-hist_equalize : True
-invert : False                # return 255 - image
-mix_up_gray_scale : True      # convert img to grayscale and mixup with original image.
-adjust_brightness : 0.5,1.5   # mixup with white img
-solarize :               # For each pixel in the image, select the pixel.
-  Threshold : 255        #If the value is less than the threshold.Otherwise, subtract 255 from the pixel.
-posterize:                  # shift right bit values and left shift ( equivalent clip value ) it so strong augment
-  bits : 4                    #in range(0,8) , 4 is no-augment
-contrast : True               # mixup original image with a mean pixel-value image.     
+  hist_equalize : [1,1]
+  invert :                 # return 255 - image
+  mix_up_gray_scale : True      # convert img to grayscale and mixup with original image.
+  adjust_brightness : [0.5, 1.5]   # mixup with white img
+  solarize :               # For each pixel in the image, select the pixel. #If the value is less than the threshold.Otherwise, subtract 255 from the pixel.
+  posterize:                  # shift right bit values and left shift ( equivalent clip value ) it so strong augment #in range(0,8) , 4 is no-augment
+  contrast : #True               # mixup original image with a mean pixel-value image.     
 

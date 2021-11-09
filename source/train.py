@@ -64,7 +64,7 @@ def train(opt):
             LOGGER.info('resume training from last checkpoint')
     else:                                               #load from ImagesNet weight
         LOGGER.info(f"weight path : {opt.weights} does'nt exist, ImagesnNet weight will be loaded ")
-        model = loadingImageNetWeight(model)
+        model = loadingImageNetWeight(model,name=opt.name)
        
     model = model.to(device)
 
