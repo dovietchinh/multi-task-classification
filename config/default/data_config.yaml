@@ -2,8 +2,8 @@
 # train_csv : /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_train_1103.csv
 # val_csv: /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_val_1103.csv
 DATA_FOLDER : /u01/Intern/chinhdv/PROJECT/pet_classification
-train_csv : /u01/Intern/chinhdv/PROJECT/pet_classification/df_train_old.csv
-val_csv : /u01/Intern/chinhdv/PROJECT/pet_classification/df_val_old.csv
+train_csv : /u01/Intern/chinhdv/code/M_classification_torch/a.csv
+val_csv : /u01/Intern/chinhdv/code/M_classification_torch/b.csv
 
 nc : 76 # number classes ( if multi-output specific number_classes in a list. eg: [2,4,5])
 
@@ -12,3 +12,10 @@ nc : 76 # number classes ( if multi-output specific number_classes in a list. eg
 #   gender: female,male
 classes:
     label: [a, b, c, d]
+    label2: [a1, b1, c1, d1]
+
+task_weights : [1,1.5]
+class_weights:
+    label: [1,2,1,1]
+    label2: [1,1,3,1]
+        

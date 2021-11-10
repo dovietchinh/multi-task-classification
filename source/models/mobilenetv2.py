@@ -211,7 +211,7 @@ class MobileNetV2(nn.Module):
         x = torch.flatten(x, 1)
         # x = self.classifier(x)
         outputs = []
-        for classifier in head:
+        for classifier in self.head:
             out = classifier(x)
             outputs.append(out)
         return outputs

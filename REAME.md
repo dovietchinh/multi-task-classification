@@ -185,4 +185,10 @@ image-path : DATAFOLDER / label_1/ label_2 /.../ label_n / *.jpg
     --cfg YOUR_PATH/train_config.yaml \
     --data YOUR_PATH/data.yaml 
 ```
-    
+
+detail of training progress    
+
+```
+    cd SAVE_DIR
+    tensorboard --logdir=tensorboard_log
+```

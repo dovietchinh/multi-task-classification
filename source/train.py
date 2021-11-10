@@ -12,20 +12,21 @@ from models.mobilenetv2 import MobileNetV2
 import os
 import numpy as np
 import logging 
-DEBUG=1
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 logging.basicConfig()
 def train(opt):
+    softmax = torch.nn.Softmax(1)
     os.makedirs(opt.save_dir, exist_ok=True)
     df_train = pd.read_csv(opt.train_csv)
     df_val = pd.read_csv(opt.val_csv)
-    if DEBUG: 
+    if 1: 
         df_train = df_train[:100]
         df_val = df_val[:100]
     device = select_device(opt.device,model_name=opt.model_name)
-    visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
-    visualize(df_val,classes=opt.classes,save_dir=opt.save_dir,dataset_name='val')
+    if opt.visualize:
+        visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
+        visualize(df_val,classes=opt.classes,save_dir=opt.save_dir,dataset_name='val')
     
     cuda = device.type != 'cpu'
     ds_train = LoadImagesAndLabels(df_train,
@@ -54,7 +55,7 @@ def train(opt):
               'val'  : valLoader}
     callback = CallBack(opt.save_dir)
     # init model
-    model = MobileNetV2(opt.nc)
+    model = MobileNetV2(opt.classes)
 
     loss_train_log = []
     loss_val_log = []
@@ -96,9 +97,23 @@ def train(opt):
     del g0,g1,g2
 
     #loss function
-    class_weights = torch.Tensor(opt.class_weights).to(device) if hasattr(opt,'class_weights') else None
-    criterior = torch.nn.CrossEntropyLoss(weight=class_weights)
+    # class_weights = torch.Tensor(opt.class_weights).to(device) if hasattr(opt,'class_weights') else None
+    # criterior = torch.nn.CrossEntropyLoss(weight=class_weights)
+    criteriors = list()
+    for label_name in opt.classes:
+        # print(label_name)
+        if hasattr(opt.class_weights,label_name):
+            class_weights = torch.Tensor(opt.class_weights[label_name])
+            class_weights = class_weights/class_weights.sum()
+            class_weights = class_weights.to(device)
+        else: 
+            class_weights = None
+        criteriors.append(torch.nn.CrossEntropyLoss(weight=class_weights))
+        
 
+    if not isinstance(opt.task_weights,list):
+        task_weights = [opt.task_weights]
+    
     
     # if opt.linear_lr:
     #     lf = lambda x: (1 - x / (opt.epochs - 1)) * (1.0 - opt.hyp['lrf']) + opt.hyp['lrf']  # linear
@@ -114,6 +129,7 @@ def train(opt):
         # training phase.
         if epoch!=0 and opt.sampling_balance_data:
             loader['train'].dataset.on_epoch_end(n=opt.sampling_balance_data)
+        
         model.train()
         pbar = enumerate(loader['train'])
         nb = len(loader['train'])
@@ -122,8 +138,7 @@ def train(opt):
         for i, (imgs, labels, _) in tqdm(pbar,total=nb,desc='training',leave=False):
             ni = i + nb * epoch
             imgs = imgs.to(device)
-            labels = labels.to(device)
-
+            labels = [label.to(device) for label in labels]
             # Warm-up training
             if ni <= warmup_iteration:
                 xi = [0, warmup_iteration]  # x interp
@@ -137,7 +152,11 @@ def train(opt):
             
             with torch.set_grad_enabled(cuda):
                 preds = model(imgs)
-                loss = criterior(preds,labels)
+                # loss = criterior(preds,labels)
+                loss = 0
+                for index,criterior in enumerate(criteriors):
+                    loss += opt.task_weight[index]*criterior(preds[index],labels[index])
+                
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()    
@@ -147,30 +166,46 @@ def train(opt):
 
         # evaluate phase.
         model.eval()
-        y_true = []
-        y_pred = []
         epoch_loss = 0
+        
+        y_trues = {}
+        y_preds = {}
+        for index,label_name in enumerate(list(opt.classes.keys())):
+            y_trues[label_name] = []
+            y_preds[label_name] = []
+
         with torch.no_grad():
             for i, (imgs, labels, _) in tqdm(enumerate(loader['val']),total=len(loader['val']),desc='evaluating',leave=False):
                 imgs = imgs.to(device)
-                y_true.append(labels.numpy())
-                labels = labels.to(device)
+                labels = [label.to(device) for label in labels]
                 preds = model(imgs)
-                y_pred.append(preds.detach().cpu().numpy())
-                loss = criterior(preds, labels)
+                # preds_after_softmax = [sofmax(x) for x in preds]
+                # for index,label_name in enumerate(list(opt.classes.keys())):
+                #     y_preds[label_name].append(preds_after_softmax[index].detach().cpu().numpy())
+                #     y_trues[label_name].append(labels[index].detach().cpu().numpy())
+                loss = 0
+                for index,criterior in enumerate(criteriors):
+                    loss += opt.task_weight[index]*criterior(preds[index],labels[index])                      
                 epoch_loss += loss * imgs.size(0)
         epoch_loss = epoch_loss/len(loader['val'].dataset)
         loss_val_log.append(epoch_loss)
-        y_true = np.concatenate(y_true, axis=0)
-        y_pred = np.concatenate(y_pred, axis=0)
-        y_pred = np.argmax(y_pred,axis=-1)
 
-        fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
+        # y_true = np.concatenate(y_true, axis=0)
+        # for index,label_name in enumerate(list(opt.classes.keys())):
+        #     y_true = 
+        
 
-        fi = fi.split('\n')[-3].split()[-2]
-        fi = float(fi)
+        
+        
+        # fi - macro avg accuracy
+
+        # fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
+        # fi = fi.split('\n')[-3].split()[-2]
+        # fi = float(fi)
+
         fi = epoch_loss.item()
-        if stopper(epoch,fi):
+
+        if stopper(epoch,fi):   #if EarlyStopping condition meet
             break
         if epoch==stopper.best_epoch:
             ckpt_best = { 
@@ -203,7 +238,8 @@ def parse_opt(know=True):
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--patience', type=int, default=30, help='patience epoch for EarlyStopping')
-    parser.add_argument('--save_dir', type=str, default='', help='patience epoch for EarlyStopping')
+    parser.add_argument('--save_dir', type=str, default='', help='save training result')
+    parser.add_argument('--task_weights', type=list, default=1, help='weighted for each task while computing loss')
     opt = parser.parse_known_args()[0] if know else parser.parse_arg()
     return opt 
 
@@ -217,4 +253,7 @@ if __name__ =='__main__':
         setattr(opt,k,v)    
     for k,v in data.items():
         setattr(opt,k,v) 
+    assert isinstance(opt.classes,dict), "Invalid format of classes in data_config.yaml"
+    assert len(opt.task_weights) == len(opt.classes), "task weight should has the same length with classes"
+    # print(opt)
     train(opt)

@@ -33,8 +33,8 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         self.img_size = img_size
         if augment:
             self.augmenter = RandAugment(augment_params=augment_params)
-        # if augment:
-            # self.on_epoch_end(n=500)        
+        if augment:
+            self.on_epoch_end(n=500)        
         else:
             self.csv =self.csv_origin
     def __len__(self):

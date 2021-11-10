@@ -24,11 +24,10 @@ device : cuda:0
 patience : 30    # For Early-Stopping
 save_dir : /u01/Intern/chinhdv/code/M_classification_torch/result/runs_default  # save checkpoint
 
-visualize: True
+visualize: False
 
-sampling_balance_data :  # set True if sampling n sampling for each label in data
-    sample_per_label : 500
-linear_lr : True
+sampling_balance_data : 500 # set True if sampling n sampling for each label in data
+
 hyp:   #hyper parameters
   lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3)
   lrf: 0.2 # final OneCycleLR learning rate (lr0 * lrf)
@@ -37,8 +36,7 @@ hyp:   #hyper parameters
   warmup_epochs: 3.0  # warmup epochs (fractions ok)    bias lr falls from 0.1 to lr0, all other lrs rise from 0.0 to lr0
   warmup_momentum: 0.8  # warmup initial momentum
   warmup_bias_lr: 0.1  # warmup initial bias lr
-
-
+  
 #augment params
 augment_params:
   num_layers : 2
@@ -46,7 +44,10 @@ augment_params:
   #   hgain : 0.5
   #   sgain : 0.5
   #   vgain : 0.5
-
+  augment_RGB:
+      R_gain: [0.5,1.5]
+      G_gain: [0.5,1.5]
+      B_gain: [0.5,1.5]
 
 # geometric augmentation
 

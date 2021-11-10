@@ -144,7 +144,7 @@ class ResNet(nn.Module):
 
     def __init__(
         self,
-        opt_classes,
+        classes,
         block: Type[Union[BasicBlock, Bottleneck]],
         layers: List[int],
         num_classes: int = 1000,
