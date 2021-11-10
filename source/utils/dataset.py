@@ -7,7 +7,7 @@ from .augmentations import RandAugment
 import numpy as np 
 from .imbalance_data_handle import balance_data
 import pandas as pd
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('__main__.'+__name__)
 
 def preprocess(img,img_size,padding=True):
     if padding:
@@ -24,7 +24,7 @@ def preprocess(img,img_size,padding=True):
 
 class LoadImagesAndLabels(torch.utils.data.Dataset):
     
-    def __init__(self, csv, data_folder, img_size, padding, preprocess=False, augment=False,augment_params):
+    def __init__(self, csv, data_folder, img_size, padding, preprocess=False, augment=False,augment_params=None):
         self.csv_origin = csv 
         self.data_folder = data_folder 
         self.augment = augment 
@@ -32,9 +32,9 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         self.padding = padding
         self.img_size = img_size
         if augment:
-            self.augmenter = RandAugment(num_layers=num_layers,augment_params)
-        if augment:
-            self.on_epoch_end()        
+            self.augmenter = RandAugment(augment_params=augment_params)
+        # if augment:
+            # self.on_epoch_end(n=500)        
         else:
             self.csv =self.csv_origin
     def __len__(self):
@@ -43,7 +43,7 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
     def __getitem__(self, index,):
         item = self.csv.iloc[index]
         path = os.path.join(self.data_folder, item.path)
-        assert os.path.isfile(path), LOGGER.error(f'this image : {path} is corrupted')
+        assert os.path.isfile(path),f'this image : {path} is corrupted'
         img = cv2.imread(path, cv2.IMREAD_COLOR)
         if img is None:
             LOGGER.info(f'this image : {path} is corrupted')
@@ -58,13 +58,13 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         # img = img/255.
         return img,label,path
             
-    def on_epoch_end(self,):
+    def on_epoch_end(self,n=500):
         # self.csv = balance_data(csv=self.csv_origin,image_per_epoch=200)
         csv = self.csv_origin
         labels = set(csv.label)
         dfs = []
         for label in labels:
-            df = csv[csv.label==label].sample(n=500,replace=True)
+            df = csv[csv.label==label].sample(n=n,replace=True)
             dfs.append(df)
         df = pd.concat(dfs,axis=0)
         df = df.sample(frac=1).reset_index(drop=True)

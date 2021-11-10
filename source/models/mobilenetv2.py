@@ -113,6 +113,7 @@ class InvertedResidual(nn.Module):
 class MobileNetV2(nn.Module):
     def __init__(
         self,
+        classes,
         num_classes: int = 1000,
         width_mult: float = 1.0,
         inverted_residual_setting: Optional[List[List[int]]] = None,
@@ -176,11 +177,18 @@ class MobileNetV2(nn.Module):
         self.features = nn.Sequential(*features)
 
         # building classifier
-        self.classifier = nn.Sequential(
+        self.head = []
+        # self.classifier = nn.Sequential(
+        #     nn.Dropout(0.2),
+        #     nn.Linear(self.last_channel, num_classes),
+        # )
+        for label_name,class_name in classes.items():
+            classifier = nn.Sequential(
             nn.Dropout(0.2),
-            nn.Linear(self.last_channel, num_classes),
-        )
-        # ClASSES = ['pet','teddy_bear','human','other']
+            nn.Linear(self.last_channel, len(class_name)),
+            )
+            self.head.append(classifier)
+        self.sm = torch.nn.Softmax(1)
         # weight initialization
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -201,16 +209,20 @@ class MobileNetV2(nn.Module):
         # Cannot use "squeeze" as batch-size can be 1
         x = nn.functional.adaptive_avg_pool2d(x, (1, 1))
         x = torch.flatten(x, 1)
-        x = self.classifier(x)
-        return x
+        # x = self.classifier(x)
+        outputs = []
+        for classifier in head:
+            out = classifier(x)
+            outputs.append(out)
+        return outputs
 
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
 
     def predict(self,x):
-        out = self(x)
-        out = torch.nn.Softmax(1)(out)
-        return out
+        outputs = self(x)
+        outputs =[self.sm(output) for output in outputs]
+        return outputs
     # def _preprocessing(self,img):
     #     """[summary]
 

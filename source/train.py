@@ -2,29 +2,39 @@ import torch
 import yaml 
 import pandas as pd
 import argparse
-from utils.torch_utils import select_device
+from utils.torch_utils import select_device,loadingImageNetWeight
 from utils.dataset import LoadImagesAndLabels,preprocess
-from utils.general import EarlyStoping,loadingImageNetWeight
+from utils.general import EarlyStoping,visualize
+from utils.callbacks import CallBack
 from tqdm import tqdm 
 import sklearn.metrics
 from models.mobilenetv2 import MobileNetV2
 import os
 import numpy as np
 import logging 
-
+DEBUG=1
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+logging.basicConfig()
 def train(opt):
     os.makedirs(opt.save_dir, exist_ok=True)
     df_train = pd.read_csv(opt.train_csv)
     df_val = pd.read_csv(opt.val_csv)
-    device = select_device(opt.device)
+    if DEBUG: 
+        df_train = df_train[:100]
+        df_val = df_val[:100]
+    device = select_device(opt.device,model_name=opt.model_name)
+    visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
+    visualize(df_val,classes=opt.classes,save_dir=opt.save_dir,dataset_name='val')
+    
     cuda = device.type != 'cpu'
     ds_train = LoadImagesAndLabels(df_train,
                                 data_folder=opt.DATA_FOLDER,
                                 img_size = opt.img_size,
                                 padding = opt.padding,
                                 preprocess=preprocess,
-                                augment=True)
+                                augment=True,
+                                augment_params=opt.augment_params)
 
     ds_val = LoadImagesAndLabels(df_val,
                                 data_folder=opt.DATA_FOLDER,
@@ -42,7 +52,7 @@ def train(opt):
                                             # num_workers=8)
     loader = {'train': trainLoader,
               'val'  : valLoader}
-
+    callback = CallBack(opt.save_dir)
     # init model
     model = MobileNetV2(opt.nc)
 
@@ -64,7 +74,7 @@ def train(opt):
             LOGGER.info('resume training from last checkpoint')
     else:                                               #load from ImagesNet weight
         LOGGER.info(f"weight path : {opt.weights} does'nt exist, ImagesnNet weight will be loaded ")
-        model = loadingImageNetWeight(model,name=opt.name)
+        model = loadingImageNetWeight(model,name=opt.model_name)
        
     model = model.to(device)
 
@@ -90,14 +100,20 @@ def train(opt):
     criterior = torch.nn.CrossEntropyLoss(weight=class_weights)
 
     
+    # if opt.linear_lr:
+    #     lf = lambda x: (1 - x / (opt.epochs - 1)) * (1.0 - opt.hyp['lrf']) + opt.hyp['lrf']  # linear
+    # else:
+    #     # lf = one_cycle(1, opt.hyp['lrf'], epochs)
+    #     pass
+
     stopper = EarlyStoping(best_fitness=best_fitness, best_epoch=best_epoch, patience=opt.patience)
     
     pbar_epoch = tqdm(range(start_epoch,opt.epochs),total=opt.epochs,initial=start_epoch)
     
     for epoch in pbar_epoch:
         # training phase.
-        if epoch!=0:
-            loader['train'].dataset.on_epoch_end()
+        if epoch!=0 and opt.sampling_balance_data:
+            loader['train'].dataset.on_epoch_end(n=opt.sampling_balance_data)
         model.train()
         pbar = enumerate(loader['train'])
         nb = len(loader['train'])
@@ -113,10 +129,10 @@ def train(opt):
                 xi = [0, warmup_iteration]  # x interp
                 # accumulate = max(1, np.interp(ni, xi, [1, nbs / batch_size]).round())
                 for j, x in enumerate(optimizer.param_groups):
-                    
-                    x['lr'] = np.interp(ni, xi, [hyp['warmup_bias_lr'] if j == 2 else 0.0, x['initial_lr'] * lf(epoch)])
+                    #bias lr falls from 0.1 to lr0, all other lrs rise from 0.0 to lr0
+                    x['lr'] = np.interp(ni, xi, [opt.hyp['warmup_bias_lr'] if j == 2 else 0.0, opt.hyp['lr0']]) #x['initial_lr'] * lf(epoch)])
                     if 'momentum' in x:
-                        x['momentum'] = np.interp(ni, xi, [hyp['warmup_momentum'], hyp['momentum']])
+                        x['momentum'] = np.interp(ni, xi, [opt.hyp['warmup_momentum'], opt.hyp['momentum']])
             
             
             with torch.set_grad_enabled(cuda):
@@ -127,7 +143,6 @@ def train(opt):
                 optimizer.step()    
                 epoch_loss += loss * imgs.size(0)
         epoch_loss = epoch_loss/len(loader['train'].dataset)
-        # print("{} Loss: {:.4f}".format('train',epoch_loss))
         loss_train_log.append(epoch_loss)
 
         # evaluate phase.
@@ -146,7 +161,6 @@ def train(opt):
                 epoch_loss += loss * imgs.size(0)
         epoch_loss = epoch_loss/len(loader['val'].dataset)
         loss_val_log.append(epoch_loss)
-        # print("{} Loss: {:.4f}".format('val',epoch_loss))
         y_true = np.concatenate(y_true, axis=0)
         y_pred = np.concatenate(y_pred, axis=0)
         y_pred = np.argmax(y_pred,axis=-1)
@@ -156,7 +170,6 @@ def train(opt):
         fi = fi.split('\n')[-3].split()[-2]
         fi = float(fi)
         fi = epoch_loss.item()
-        print(fi)
         if stopper(epoch,fi):
             break
         if epoch==stopper.best_epoch:
@@ -179,7 +192,8 @@ def train(opt):
                         'loss_train_log': loss_train_log,                  
                         'loss_val_log': loss_val_log
                     }
-        torch.save(ckpt_last,os.path.join(opt.save_dir,'last.pt'))      
+        torch.save(ckpt_last,os.path.join(opt.save_dir,'last.pt'))   
+        callback(loss_train_log[-1],loss_val_log[-1],epoch)   
         # _ = os.system('clear')
 def parse_opt(know=True):
     parser = argparse.ArgumentParser()

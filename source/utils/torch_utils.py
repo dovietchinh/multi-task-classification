@@ -2,10 +2,10 @@ import torch
 import logging 
 import platform
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('__main__.'+__name__)
 
-def select_device(device=''):
-    s = f'YOLOv1 💥💥💥💥💥  torch {torch.__version__}'
+def select_device(device='',model_name=''):
+    s = f'{model_name.upper()} 💥💥💥💥💥  torch {torch.__version__}'
     device = str(device).lower().replace('cuda:','').strip()
     cpu = device=='cpu'
     cuda = not cpu and torch.cuda.is_available()
@@ -21,7 +21,7 @@ def select_device(device=''):
     
 def loadingImageNetWeight(model,name):
     import io
-    import request
+    import requests
     model_urls = {
         'mobilenet_v2': 'https://download.pytorch.org/models/mobilenet_v2-b0353104.pth',
         'resnet18': 'https://download.pytorch.org/models/resnet18-f37072fd.pth',
@@ -42,8 +42,8 @@ def loadingImageNetWeight(model,name):
     temp = {}
     for k,v in imagenet_state_dict.items():
         if k in my_state_dict:
-            if v.shape==my_state_dict.get(k)
-                setattr(temp,k,v)
+            if v.shape==my_state_dict.get(k).shape:
+                temp[k]=v
     my_state_dict.update(temp)
     model.load_state_dict(my_state_dict)
     return model
