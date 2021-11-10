@@ -24,13 +24,14 @@ def preprocess(img,img_size,padding=True):
 
 class LoadImagesAndLabels(torch.utils.data.Dataset):
     
-    def __init__(self, csv, data_folder, img_size, padding, preprocess=False, augment=False,augment_params=None):
+    def __init__(self, csv, data_folder, img_size, padding, classes,preprocess=False, augment=False,augment_params=None):
         self.csv_origin = csv 
         self.data_folder = data_folder 
         self.augment = augment 
         self.preprocess = preprocess
         self.padding = padding
         self.img_size = img_size
+        self.classes = classes
         if augment:
             self.augmenter = RandAugment(augment_params=augment_params)
         if augment:
@@ -46,8 +47,12 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         assert os.path.isfile(path),f'this image : {path} is corrupted'
         img = cv2.imread(path, cv2.IMREAD_COLOR)
         if img is None:
-            LOGGER.info(f'this image : {path} is corrupted')
-        label = item.label
+            LOGGER.info(f' this image : {path} is corrupted')
+        labels = []
+        for label_name in self.classes:
+            label = item[label_name]
+            labels.append(label)
+        
         
         if self.preprocess:
             img = self.preprocess(img, img_size=self.img_size, padding=self.padding)
@@ -56,7 +61,7 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         img = np.transpose(img, [2,0,1])
         img = img.astype('float32')/255.
         # img = img/255.
-        return img,label,path
+        return img,labels,path
             
     def on_epoch_end(self,n=500):
         # self.csv = balance_data(csv=self.csv_origin,image_per_epoch=200)

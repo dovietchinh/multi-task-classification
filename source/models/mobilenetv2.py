@@ -113,7 +113,7 @@ class InvertedResidual(nn.Module):
 class MobileNetV2(nn.Module):
     def __init__(
         self,
-        classes,
+        model_config,
         num_classes: int = 1000,
         width_mult: float = 1.0,
         inverted_residual_setting: Optional[List[List[int]]] = None,
@@ -177,15 +177,15 @@ class MobileNetV2(nn.Module):
         self.features = nn.Sequential(*features)
 
         # building classifier
-        self.head = []
+        self.head = torch.nn.ModuleList()
         # self.classifier = nn.Sequential(
         #     nn.Dropout(0.2),
         #     nn.Linear(self.last_channel, num_classes),
         # )
-        for label_name,class_name in classes.items():
+        for values in model_config:
             classifier = nn.Sequential(
             nn.Dropout(0.2),
-            nn.Linear(self.last_channel, len(class_name)),
+            nn.Linear(self.last_channel, values),
             )
             self.head.append(classifier)
         self.sm = torch.nn.Softmax(1)

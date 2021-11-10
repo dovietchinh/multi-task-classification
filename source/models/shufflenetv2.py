@@ -99,7 +99,7 @@ class InvertedResidual(nn.Module):
 class ShuffleNetV2(nn.Module):
     def __init__(
         self,
-        classes,
+        model_config,
         stages_repeats: List[int],
         stages_out_channels: List[int],
         num_classes: int = 1000,
@@ -146,8 +146,8 @@ class ShuffleNetV2(nn.Module):
 
         # self.fc = nn.Linear(output_channels, num_classes)
         self.head = []
-        for label_name,class_name in classes.items():
-            fc = nn.Linear(output_channels, len(class_name))
+        for values in model_config():
+            fc = nn.Linear(output_channels, values)
             self.head.append(fc)
         self.sm = torch.nn.Softmax(1)
     def _forward_impl(self, x: Tensor) -> Tensor:

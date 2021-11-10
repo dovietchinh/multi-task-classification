@@ -19,12 +19,12 @@ class EarlyStoping:
             self.best_fitness = fi
         stop =  (epoch - self.best_epoch) >= self.patience
         if stop:
-            LOGGER.info(f'EarlyStopping patience {self.patience} exceeded, stopping training')
+            LOGGER.info(f' EarlyStopping patience {self.patience} exceeded, stopping training')
         return stop
 
 
 def visualize(csv,classes,save_dir,dataset_name='train'):
-    LOGGER.info('loadding data, please wait......')
+    LOGGER.info(' loadding data, please wait......')
     if isinstance(csv,str):
         csv = pd.read_csv(csv)
     for label_name,class_name in classes.items():

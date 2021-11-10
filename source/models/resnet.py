@@ -144,7 +144,7 @@ class ResNet(nn.Module):
 
     def __init__(
         self,
-        classes,
+        model_config,
         block: Type[Union[BasicBlock, Bottleneck]],
         layers: List[int],
         num_classes: int = 1000,
@@ -185,8 +185,8 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         # self.fc = nn.Linear(512 * block.expansion, num_classes)
         self.head = []
-        for label_name,class_name in classes.items():
-            fc = nn.Linear(512 * block.expansion, len(class_name))
+        for values in model_config:
+            fc = nn.Linear(512 * block.expansion, values)
             self.head.append(fc)
         self.sm = torch.nn.Softmax(1)
         for m in self.modules():

@@ -33,6 +33,7 @@ def train(opt):
                                 data_folder=opt.DATA_FOLDER,
                                 img_size = opt.img_size,
                                 padding = opt.padding,
+                                classes = opt.classes,
                                 preprocess=preprocess,
                                 augment=True,
                                 augment_params=opt.augment_params)
@@ -41,6 +42,7 @@ def train(opt):
                                 data_folder=opt.DATA_FOLDER,
                                 img_size = opt.img_size,
                                 padding= opt.padding,
+                                classes = opt.classes,
                                 preprocess=preprocess,
                                 augment=False)
     trainLoader = torch.utils.data.DataLoader(ds_train,
@@ -54,15 +56,19 @@ def train(opt):
     loader = {'train': trainLoader,
               'val'  : valLoader}
     callback = CallBack(opt.save_dir)
+
     # init model
-    model = MobileNetV2(opt.classes)
+    model_config = []
+    for k,v in opt.classes.items():
+        model_config.append(len(v))
+    model = MobileNetV2(model_config)
 
     loss_train_log = []
     loss_val_log = []
     best_fitness,best_epoch = 0,0
     start_epoch = 0
     if os.path.isfile(opt.weights):                    # load from checkpoint
-        LOGGER.info(f'loading pretrain from {opt.weights}')
+        LOGGER.info(f' loading pretrain from {opt.weights}')
         ckpt_load = torch.load(opt.weights)
         model.load_state_dict(ckpt_load['state_dict'])
         if opt.continue_training:
@@ -72,7 +78,7 @@ def train(opt):
             loss_val_log = ckpt_load['loss_val_log']
             fitness = ckpt_load['fitness']
             best_fitness = ckpt_load['best_fitness']
-            LOGGER.info('resume training from last checkpoint')
+            LOGGER.info(' resume training from last checkpoint')
     else:                                               #load from ImagesNet weight
         LOGGER.info(f"weight path : {opt.weights} does'nt exist, ImagesnNet weight will be loaded ")
         model = loadingImageNetWeight(model,name=opt.model_name)
@@ -155,7 +161,7 @@ def train(opt):
                 # loss = criterior(preds,labels)
                 loss = 0
                 for index,criterior in enumerate(criteriors):
-                    loss += opt.task_weight[index]*criterior(preds[index],labels[index])
+                    loss += opt.task_weights[index]*criterior(preds[index],labels[index])
                 
                 optimizer.zero_grad()
                 loss.backward()
@@ -185,7 +191,7 @@ def train(opt):
                 #     y_trues[label_name].append(labels[index].detach().cpu().numpy())
                 loss = 0
                 for index,criterior in enumerate(criteriors):
-                    loss += opt.task_weight[index]*criterior(preds[index],labels[index])                      
+                    loss += opt.task_weights[index]*criterior(preds[index],labels[index])                      
                 epoch_loss += loss * imgs.size(0)
         epoch_loss = epoch_loss/len(loader['val'].dataset)
         loss_val_log.append(epoch_loss)
@@ -229,7 +235,7 @@ def train(opt):
                     }
         torch.save(ckpt_last,os.path.join(opt.save_dir,'last.pt'))   
         callback(loss_train_log[-1],loss_val_log[-1],epoch)   
-        # _ = os.system('clear')
+
 def parse_opt(know=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default='',help = 'weight path')
