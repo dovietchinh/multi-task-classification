@@ -5,8 +5,6 @@ DATA_FOLDER : /u01/Intern/chinhdv/PROJECT/pet_classification
 train_csv : /u01/Intern/chinhdv/code/M_classification_torch/a.csv
 val_csv : /u01/Intern/chinhdv/code/M_classification_torch/b.csv
 
-nc : 76 # number classes ( if multi-output specific number_classes in a list. eg: [2,4,5])
-
 # classes:
 #   label: 0-18, 18-55, 55+
 #   gender: female,male

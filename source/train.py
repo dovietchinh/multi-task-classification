@@ -18,11 +18,21 @@ logging.basicConfig()
 def train(opt):
     softmax = torch.nn.Softmax(1)
     os.makedirs(opt.save_dir, exist_ok=True)
-    df_train = pd.read_csv(opt.train_csv)
-    df_val = pd.read_csv(opt.val_csv)
-    if 1: 
-        df_train = df_train[:100]
-        df_val = df_val[:100]
+    
+    # read train_csv
+    if isinstance(opt.train_csv):
+        opt.train_csv = [opt.train_csv]
+    for file in opt.train_csv:
+        df_train.append(pd.read_csv(file))
+    df_train = pd.concat(df_train,axis=0)
+
+    # read val_csv
+    if isinstance(opt.val_csv):
+        opt.val_csv = [opt.val_csv]
+    for file in opt.val_csv:
+        df_val.append(pd.read_csv(file))
+    df_val = pd.concat(df_train,axis=0)
+
     device = select_device(opt.device,model_name=opt.model_name)
     if opt.visualize:
         visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
