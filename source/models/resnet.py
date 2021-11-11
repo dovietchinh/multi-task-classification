@@ -184,7 +184,7 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         # self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.head = []
+        self.head = torch.nn.ModuleList()
         for values in model_config:
             fc = nn.Linear(512 * block.expansion, values)
             self.head.append(fc)

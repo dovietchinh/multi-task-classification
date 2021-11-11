@@ -145,7 +145,7 @@ class ShuffleNetV2(nn.Module):
         )
 
         # self.fc = nn.Linear(output_channels, num_classes)
-        self.head = []
+        self.head = torch.nn.ModuleList()
         for values in model_config():
             fc = nn.Linear(output_channels, values)
             self.head.append(fc)
