@@ -5,7 +5,7 @@ import platform
 LOGGER = logging.getLogger('__main__.'+__name__)
 
 def select_device(device='',model_name=''):
-    s = f'{model_name.upper()} 💥💥💥💥💥  torch {torch.__version__}'
+    s = f' {model_name.upper()} author:dovietchinh 💥💥💥💥💥  torch {torch.__version__}'
     device = str(device).lower().replace('cuda:','').strip()
     cpu = device=='cpu'
     cuda = not cpu and torch.cuda.is_available()
