@@ -8,7 +8,7 @@ Implement classification models for multi-task learning.
 
     - [x] MobilenetV2.
 
-    - [x] MobileNetV3.
+    - [ ] MobileNetV3.
 
     - [x] ResNet.
 
@@ -20,7 +20,7 @@ Implement classification models for multi-task learning.
 
     - [ ] DenseNet.
 
-    - [ ] ShuffleNet.
+    - [x] ShuffleNet.
 
     - [ ] EfficientNetV1.
 
@@ -84,15 +84,27 @@ Implement classification models for multi-task learning.
 
     - [x] Early-stopping.
 
+        - [x] macro-accuracy based-on.
+        
+        - [ ] macro-f1 based-on.
+
+        - [x] val-loss based-on.
+
     - [ ] FixRes strategy. [detail](https://arxiv.org/pdf/1906.06423.pdf)
 
     - [ ] Progressive learning with adaptive regularization. [detail](https://arxiv.org/pdf/2104.00298.pdf)
 
+    - [ ] Multi-task Learning with Labeled and Unlabeled Tasks
+
 - [x] Data-format.
 
-    - [x] Pandas-DataFrame
+    - [x] Pandas-DataFrame.
 
-    - [x] Folder-format
+        - [x] Single-sile csv.
+
+        - [x] Multi-file csv.
+
+    - [x] Folder-format.
 
 - [x] Visualize.
 
@@ -100,10 +112,40 @@ Implement classification models for multi-task learning.
 
     - [x] statistic
 
-    - [x] Confusion-matrix.
+    - [ ] Confusion-matrix.
 
-    - [x] ROC.
+    - [ ] ROC. 
 
+- [x] CallBacks. 
+
+    - [ ] on_pretrain_routine_start.
+
+    - [ ] on_pretrain_routine_end.
+
+    - [ ] on_training_start. 
+
+    - [ ] on_training_end.
+        
+    - [ ] on_epoch_start.
+
+    - [x] on_epoch_end.
+        
+    - [x] on_bestfit_epoch_end. 
+        
+    - [x] on_model_save.
+
+- [x] Imbalance data.
+
+    - [ ] Oversampling.
+
+    - [x] Undersampling
+
+    - [x] weighted tasks.
+
+    - [x] weighted classes.
+
+    - [ ] weighted sample.
+    
 ### REQUIREMENTS
 
 `
