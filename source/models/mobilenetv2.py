@@ -4,8 +4,8 @@ from torch import Tensor
 import numpy as np
 # from ._internally_replaced_utils import load_state_dict_from_url
 from typing import Callable, Any, Optional, List
-
-
+import logging
+LOGGER = logging.getLogger('__main__.'+__name__)
 __all__ = ['MobileNetV2', 'mobilenet_v2']
 
 
@@ -182,6 +182,7 @@ class MobileNetV2(nn.Module):
         #     nn.Dropout(0.2),
         #     nn.Linear(self.last_channel, num_classes),
         # )
+        # LOGGER.debug(model_config)
         for values in model_config:
             classifier = nn.Sequential(
             nn.Dropout(0.2),
