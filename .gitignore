@@ -146,3 +146,7 @@ result/
 a.csv
 b.csv 
 debug.py
+draft_old.py
+draft.py
+*.txt
+*.csv

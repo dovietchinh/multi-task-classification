@@ -94,7 +94,7 @@ Implement classification models for multi-task learning.
 
     - [ ] Progressive learning with adaptive regularization. [detail](https://arxiv.org/pdf/2104.00298.pdf)
 
-    - [ ] Multi-task Learning with Labeled and Unlabeled Tasks
+    - [ ] Multi-task Learning with Labeled and Unlabeled Tasks [detail](http://proceedings.mlr.press/v70/pentina17a/pentina17a.pdf)
 
 - [x] Data-format.
 
@@ -145,7 +145,7 @@ Implement classification models for multi-task learning.
     - [x] weighted classes.
 
     - [ ] weighted sample.
-    
+
 ### REQUIREMENTS
 
 `

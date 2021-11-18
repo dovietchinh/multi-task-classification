@@ -81,14 +81,6 @@ def evaluate(opt):
         with open(opt.logfile,'a') as f:
             f.write(f'-------------{k}-----------\n')
             f.write(fi+'\n')
-        
-
-        
-
-
-        
-
-
 
 def parse_opt(know):
     parser = argparse.ArgumentParser()

@@ -77,9 +77,7 @@ def train(opt):
     # init model
     model_config = []
     for k,v in opt.classes.items():
-        print(k,v)
         model_config.append(len(v))
-    print(model_config)
     model = MobileNetV2(model_config)
 
     loss_train_log = []
@@ -195,9 +193,6 @@ def train(opt):
                 epoch_loss += loss * imgs.size(0) # imgs.size = batch_size
         epoch_loss = epoch_loss/len(loader['val'].dataset)
         loss_val_log.append(epoch_loss)
-
-
-        
         
         # fi - macro avg accuracy
 
@@ -237,10 +232,10 @@ def train(opt):
 def parse_opt(know=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default='',help = 'weight path')
-    parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/train_config.yaml')
-    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/data_config.yaml')
-    parser.add_argument('--batch-size', type=int, default=64)
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/human_attribute_2/train_config.yaml')
+    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/human_attribute_2/data_config.yaml')
+    parser.add_argument('--batch-size', type=int, default=128)
+    parser.add_argument('--epochs', type=int, default=500)
     parser.add_argument('--patience', type=int, default=30, help='patience epoch for EarlyStopping')
     parser.add_argument('--save_dir', type=str, default='', help='save training result')
     parser.add_argument('--task_weights', type=list, default=1, help='weighted for each task while computing loss')

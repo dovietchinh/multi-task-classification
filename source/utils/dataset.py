@@ -39,11 +39,11 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
                     self.maping_name[classes_name] = index
         if augment:
             self.augmenter = RandAugment(augment_params=augment_params)
-        # if augment:
-        #     self.on_epoch_end(n=500)        
-        # else:
-        #     self.csv =self.csv_origin
-        self.csv =self.csv_origin
+        if augment:
+            self.on_epoch_end(n=5000)        
+        else:
+            self.csv =self.csv_origin
+        # self.csv =self.csv_origin
     def __len__(self):
         return len(self.csv)
 

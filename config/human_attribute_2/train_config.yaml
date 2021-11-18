@@ -15,18 +15,18 @@ model_name : 'mobilenet_v2'
 
 img_size : 224
 padding : False   # padding before resize for unsquare image
-weights : /u01/Intern/chinhdv/code/M_classification_torch/result/runs_default/best.pt
-continue_training : False
-epochs: 500
+weights : /u01/Intern/chinhdv/code/M_classification_torch/result/runs_human_attributes_2/last.pt
+continue_training : True
+epochs: 1000
 batch_size : 128
 save_best: True
 device : cuda:0
-patience : 50    # For Early-Stopping
-save_dir : /u01/Intern/chinhdv/code/M_classification_torch/result/runs_human_attributes_1  # save checkpoint
+patience : 1000    # For Early-Stopping
+save_dir : /u01/Intern/chinhdv/code/M_classification_torch/result/runs_human_attributes_2  # save checkpoint
 
 visualize: True
 
-# sampling_balance_data : 500 # set True if sampling n sampling for each label in data
+sampling_balance_data : 5000 # set True if sampling n sampling for each label in data
 
 hyp:   #hyper parameters
   lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3)
@@ -39,7 +39,7 @@ hyp:   #hyper parameters
   
 #augment params
 augment_params:
-  num_layers : 2
+  num_layers : 3
   # augment_hsv : 
   #   hgain : 0.5
   #   sgain : 0.5
