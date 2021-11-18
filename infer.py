@@ -3,7 +3,7 @@ from source.models.mobilenetv2 import MobileNetV2
 import numpy as np
 import cv2
 def load_model(path='result/runs_m/last.pt',device='cuda:0'):
-    model = MobileNetV2(76)
+    model = MobileNetV2([76]])
     model.load_state_dict(torch.load(path)['state_dict'])
     model = model.to(device)
     model.eval()
@@ -29,6 +29,6 @@ def predict_merge_model(model, img):
 if __name__ =='__main__':
     device = torch.device('cuda:0')
     model = load_model(path='result/runs_m/last.pt',device=device)
-    img = cv2.imread('/u01/Intern/chinhdv/DATA/milk/all_crop_data_origin/abbott/abbott_grow/abbott_grow_1/0000.jpg')
+    img = cv2.imread('test.jpg', cv2.IMREAD_COLOR)
     out = predict_merge_model(model,img)
     print(out)
