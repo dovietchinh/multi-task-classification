@@ -206,15 +206,15 @@ See config file for more detail.
 Put your whole data in DATA_FOLDER [config-file](config/default/data_config.yaml)
 ### 1.Pandas Format: 
 
-colums-name: 
+colums-name:
 
-    path : images-relative path with DATA_FOLDER 
+- path : images-relative path with DATA_FOLDER 
 
-    label_name_1 : must be the same with *classes in data_config.yaml. values can be 'class_name' or class_index
+- label_name_1 : must be the same with *classes in data_config.yaml. values can be 'class_name' or class_index
 
-    ...
+- ...
 
-    label_name_n:
+- label_name_n:
 
 ### 2.Folder-format
 
@@ -228,9 +228,19 @@ image-path : DATAFOLDER / label_1/ label_2 /.../ label_n / *.jpg
     --data YOUR_PATH/data.yaml 
 ```
 
-detail of training progress    
+### 4.Tensorboard     
 
 ```
     cd SAVE_DIR
     tensorboard --logdir=tensorboard_log
 ```
+![Tensorboard](markdown/tensorboard.png "Tensorboard")
+## Contact
+
+If you find any misstake in my work, please contact me. I'm really grateful.
+
+ - **personal email:** dovietchinh1998@gmail.com
+
+Thanks for your interest. 
+Hope this work is helpful.
+

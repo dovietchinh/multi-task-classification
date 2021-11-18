@@ -141,8 +141,7 @@ cython_debug/
 result_loc/
 result_origin/
 result/
-*.jpg
-*.png 
+
 a.csv
 b.csv 
 debug.py
@@ -150,3 +149,6 @@ draft_old.py
 draft.py
 *.txt
 *.csv
+test_PA100K_0
+test_PA100K
+testasd
