@@ -38,10 +38,11 @@ def evaluate(opt):
     padding = getattr(checkpoint['meta_data'], 'padding')
     img_size = getattr(checkpoint['meta_data'], 'img_size')
     
+    
     ds_val = LoadImagesAndLabels(df_val,
                                 data_folder=opt.DATA_FOLDER,
-                                img_size = opt.img_size,
-                                padding= opt.padding,
+                                img_size = img_size,
+                                padding= padding,
                                 classes = opt.classes,
                                 format_index = opt.format_index,
                                 preprocess=preprocess,
@@ -81,12 +82,16 @@ def evaluate(opt):
         with open(opt.logfile,'a') as f:
             f.write(f'-------------{k}-----------\n')
             f.write(fi+'\n')
+            print(f'-------------{k}-----------\n')
+            print(fi+'\n')
 
 def parse_opt(know):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default='', help="checkpoint path")
+    parser.add_argument('--batch_size', type=int, default=64, help="batch size in evaluating")
+    parser.add_argument('--device', type=str, default='', help="select gpu")
     parser.add_argument("--val_csv",type=str, default='',help='')
-    parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/train_config.yaml')
+    # parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/train_config.yaml')
     parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/data_config.yaml')
     parser.add_argument("--logfile", type=str, default="log.evaluate.txt", help="log the evaluating result")
     opt = parser.parse_known_args()[0] if know else parser.parse_arg()
@@ -94,12 +99,12 @@ def parse_opt(know):
 
 def main():
     opt = parse_opt(True)
-    with open(opt.cfg) as f:
-        cfg = yaml.safe_load(f)
+    # with open(opt.cfg) as f:
+        # cfg = yaml.safe_load(f)
     with open(opt.data) as f:
         data = yaml.safe_load(f)
-    for k,v in cfg.items():
-        setattr(opt,k,v)    
+    # for k,v in cfg.items():
+        # setattr(opt,k,v)    
     for k,v in data.items():
         setattr(opt,k,v) 
     assert isinstance(opt.classes,dict), "Invalid format of classes in data_config.yaml"

@@ -2,6 +2,8 @@
 
 Implement classification models for multi-task learning.
 
+This work was inspired by [ultralytics/yolov5](https://github.com/ultralytics/yolov5) a lot.
+
 ### TODO
 
 - [x] Models zoo
@@ -12,15 +14,29 @@ Implement classification models for multi-task learning.
 
     - [x] ResNet.
 
-        - [x] ResNet50.
+        - [x] ResNet18.
 
         - [x] ResNet34.
 
-        - [x] ResNet18.
+        - [x] ResNet50.
+
+        - [x] Resnet101.
+
+        - [x] Resnet152.
+
+        - [x] Resnext101_32x8d
+
+        - [x] wide_resnet50_2
+
+        - [x] wide_resnet101_2
 
     - [ ] DenseNet.
 
     - [x] ShuffleNet.
+
+        - [x] shufflenet_v2_x0.5
+
+        - [x] shufflenet_v2_x1.0
 
     - [ ] EfficientNetV1.
 
@@ -240,7 +256,19 @@ image-path : DATAFOLDER / label_1/ label_2 /.../ label_n / *.jpg
 If you find any misstake in my work, please contact me. I'm really grateful.
 
  - **personal email:** dovietchinh1998@gmail.com
+ - **author:** Đỗ Viết Chính
 
 Thanks for your interest. 
 Hope this work is helpful.
+
+## Reference 
+
+[Deep Residual Learning for Image Recognition.](https://arxiv.org/abs/1512.03385)
+
+[MobileNetV2: Inverted Residuals and Linear Bottlenecks.](https://arxiv.org/abs/1801.04381)
+
+[ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices.](https://arxiv.org/abs/1707.01083)
+
+[EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.](https://arxiv.org/abs/1905.11946v1?fbclid=IwAR15HgcBlYsePX34qTK2aHti_GiucEYpQHjben-8wsTf7O83YPhrJQgXEJ0)
+
 

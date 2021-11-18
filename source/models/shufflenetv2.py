@@ -99,11 +99,11 @@ class InvertedResidual(nn.Module):
 class ShuffleNetV2(nn.Module):
     def __init__(
         self,
-        model_config,
         stages_repeats: List[int],
         stages_out_channels: List[int],
         num_classes: int = 1000,
-        inverted_residual: Callable[..., nn.Module] = InvertedResidual
+        inverted_residual: Callable[..., nn.Module] = InvertedResidual,
+        model_config = None,
     ) -> None:
         super(ShuffleNetV2, self).__init__()
 
@@ -146,7 +146,7 @@ class ShuffleNetV2(nn.Module):
 
         # self.fc = nn.Linear(output_channels, num_classes)
         self.head = torch.nn.ModuleList()
-        for values in model_config():
+        for values in model_config:
             fc = nn.Linear(output_channels, values)
             self.head.append(fc)
         self.sm = torch.nn.Softmax(1)
@@ -159,11 +159,21 @@ class ShuffleNetV2(nn.Module):
         x = self.stage4(x)
         x = self.conv5(x)
         x = x.mean([2, 3])  # globalpool
-        x = self.fc(x)
-        return x
+        x = torch.flatten(x, 1)
+        # x = self.fc(x)
+        outputs = []
+        for fc in self.head:
+            output = fc(x)
+            outputs.append(output)
+        return outputs
 
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
+
+    def predict(self,x):
+        outputs = self(x)
+        outputs = [self.sm(output) for output in outputs]
+        return outputs
 
 
 def _shufflenetv2(arch: str, pretrained: bool, progress: bool, *args: Any, **kwargs: Any) -> ShuffleNetV2:
@@ -181,7 +191,7 @@ def _shufflenetv2(arch: str, pretrained: bool, progress: bool, *args: Any, **kwa
 
 
 
-[docs]def shufflenet_v2_x0_5(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x0_5(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 0.5x output channels, as described in
     `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
@@ -197,7 +207,7 @@ def _shufflenetv2(arch: str, pretrained: bool, progress: bool, *args: Any, **kwa
 
 
 
-[docs]def shufflenet_v2_x1_0(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x1_0(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.0x output channels, as described in
     `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
@@ -213,7 +223,7 @@ def _shufflenetv2(arch: str, pretrained: bool, progress: bool, *args: Any, **kwa
 
 
 
-[docs]def shufflenet_v2_x1_5(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x1_5(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 1.5x output channels, as described in
     `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"
@@ -229,7 +239,7 @@ def _shufflenetv2(arch: str, pretrained: bool, progress: bool, *args: Any, **kwa
 
 
 
-[docs]def shufflenet_v2_x2_0(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
+def shufflenet_v2_x2_0(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> ShuffleNetV2:
     """
     Constructs a ShuffleNetV2 with 2.0x output channels, as described in
     `"ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design"

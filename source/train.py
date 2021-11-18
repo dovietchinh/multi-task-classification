@@ -8,7 +8,10 @@ from utils.general import EarlyStoping,visualize
 from utils.callbacks import CallBack
 from tqdm import tqdm 
 import sklearn.metrics
-from models.mobilenetv2 import MobileNetV2
+from models import MobileNetV2,resnet18,resnet34,resnet50,resnet101,resnet152,\
+                    resnext50_32x4d,resnext101_32x8d,wide_resnet50_2,\
+                    wide_resnet101_2,shufflenet_v2_x0_5,shufflenet_v2_x1_0
+from models import model_fn,model_urls
 import os
 import numpy as np
 import logging 
@@ -78,7 +81,15 @@ def train(opt):
     model_config = []
     for k,v in opt.classes.items():
         model_config.append(len(v))
-    model = MobileNetV2(model_config)
+
+    # init model
+
+    model = model_fn[opt.model_name](model_config=model_config)
+
+    if opt.DEBUG: 
+        x = np.random.randint(0,255,(1,3,224,224))
+        x = x.astype('float')/255.
+        print(model.predict(torch.Tensor(x)))
 
     loss_train_log = []
     loss_val_log = []
@@ -98,10 +109,13 @@ def train(opt):
             LOGGER.info(' resume training from last checkpoint')
     else:                                               #load from ImagesNet weight
         LOGGER.info(f"weight path : {opt.weights} does'nt exist, ImagesnNet weight will be loaded ")
-        model = loadingImageNetWeight(model,name=opt.model_name)
+        model = loadingImageNetWeight(model,name=opt.model_name,model_urls=model_urls)
        
     model = model.to(device)
 
+    if opt.DEBUG:
+        exit()
+        
     # optimier
     g0, g1, g2 = [], [], [] #params group  #g0 - BatchNorm, g1 - weight, g2 - bias
     for module in model.modules():

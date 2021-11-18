@@ -147,10 +147,11 @@ b.csv
 debug.py
 draft_old.py
 draft.py
-*.txt
 *.csv
 test_PA100K_0
 test_PA100K
 testasd
 preprocessing.py
 script.py
+config/human_attribute_2
+config/human_attribute

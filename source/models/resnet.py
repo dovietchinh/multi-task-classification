@@ -144,7 +144,6 @@ class ResNet(nn.Module):
 
     def __init__(
         self,
-        model_config,
         block: Type[Union[BasicBlock, Bottleneck]],
         layers: List[int],
         num_classes: int = 1000,
@@ -152,8 +151,8 @@ class ResNet(nn.Module):
         groups: int = 1,
         width_per_group: int = 64,
         replace_stride_with_dilation: Optional[List[bool]] = None,
-        norm_layer: Optional[Callable[..., nn.Module]] = None
-    ) -> None:
+        norm_layer: Optional[Callable[..., nn.Module]] = None,
+    model_config=None) -> None:
         super(ResNet, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
@@ -186,8 +185,16 @@ class ResNet(nn.Module):
         # self.fc = nn.Linear(512 * block.expansion, num_classes)
         self.head = torch.nn.ModuleList()
         for values in model_config:
-            fc = nn.Linear(512 * block.expansion, values)
-            self.head.append(fc)
+
+            # fc = nn.Linear(512 * block.expansion, values)
+            # self.head.append(fc)
+
+            classifier = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(512 * block.expansion, values),
+            )
+            self.head.append(classifier)
+
         self.sm = torch.nn.Softmax(1)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -251,7 +258,7 @@ class ResNet(nn.Module):
             output = fc(x)
             outputs.append(output)
 
-        return output
+        return outputs
 
 
     def forward(self, x: Tensor) -> Tensor:
@@ -260,7 +267,7 @@ class ResNet(nn.Module):
 
     def predict(self,x: torch.Tensor) -> torch.Tensor:
         outputs = self(x)
-        outputs = [sm(out) for out in outs]
+        outputs = [self.sm(out) for out in outputs]
         return outputs
 
 
@@ -273,10 +280,10 @@ def _resnet(
     **kwargs: Any
 ) -> ResNet:
     model = ResNet(block, layers, **kwargs)
-    if pretrained:
-        state_dict = load_state_dict_from_url(model_urls[arch],
-                                              progress=progress)
-        model.load_state_dict(state_dict)
+    # if pretrained:
+    #     state_dict = load_state_dict_from_url(model_urls[arch],
+    #                                           progress=progress)
+    #     model.load_state_dict(state_dict)
     return model
 
 
