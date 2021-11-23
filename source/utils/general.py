@@ -32,6 +32,17 @@ def visualize(csv,classes_copy,format_index,save_dir,dataset_name='train'):
     classes = classes_copy.copy()
     if isinstance(csv,str):
         csv = pd.read_csv(csv)  
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')   
+
     for label_name,class_name in classes.items():
         len_ = len(class_name)
         fig = matplotlib.figure.Figure((10,10),dpi=100)
@@ -50,7 +61,10 @@ def visualize(csv,classes_copy,format_index,save_dir,dataset_name='train'):
 
         cmap = plt.cm.tab10
         colors = cmap(np.arange(len(x_axes)) % cmap.N)
-        ax.bar(x_axes,y_height,color=colors)
+
+        rec = ax.bar(x_axes,y_height,color=colors)
+        autolabel(rec)
+        ax.set_title(label_name)
         os.makedirs(os.path.join(save_dir,'visualize'), exist_ok=True)
         fig.savefig(os.path.join(save_dir,'visualize',dataset_name+'_'+label_name+'.png'))
 

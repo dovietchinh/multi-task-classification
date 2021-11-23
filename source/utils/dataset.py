@@ -39,17 +39,18 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
                     self.maping_name[classes_name] = index
         if augment:
             self.augmenter = RandAugment(augment_params=augment_params)
-        if augment:
-            self.on_epoch_end(n=5000)        
+            # self.on_epoch_end(n=5000)     
+            self.csv =self.csv_origin   
         else:
             self.csv =self.csv_origin
         # self.csv =self.csv_origin
+        # print(self.maping_name)
     def __len__(self):
         return len(self.csv)
 
     def __getitem__(self, index,):
         item = self.csv.iloc[index]
-        path = os.path.join(self.data_folder, item.new_path)
+        path = os.path.join(self.data_folder, item.path)
         assert os.path.isfile(path),f'this image : {path} is corrupted'
         img = cv2.imread(path, cv2.IMREAD_COLOR)
         if img is None:
@@ -57,7 +58,7 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         labels = []
         for label_name in self.classes:
             label = item[label_name]
-            label = self.maping_name[label]
+            # label = self.maping_name[label]
             labels.append(label)
         
         
@@ -70,7 +71,6 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         return img,labels,path
             
     def on_epoch_end(self,n=500):
-        # self.csv = balance_data(csv=self.csv_origin,image_per_epoch=200)
         csv = self.csv_origin
         labels = set(csv.age)
         dfs = []

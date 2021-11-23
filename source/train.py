@@ -7,6 +7,7 @@ from utils.dataset import LoadImagesAndLabels,preprocess
 from utils.general import EarlyStoping,visualize
 from utils.callbacks import CallBack
 from tqdm import tqdm 
+from utils.losses import FocalLoss
 import sklearn.metrics
 from models import MobileNetV2,resnet18,resnet34,resnet50,resnet101,resnet152,\
                     resnext50_32x4d,resnext101_32x8d,wide_resnet50_2,\
@@ -89,7 +90,6 @@ def train(opt):
     if opt.DEBUG: 
         x = np.random.randint(0,255,(1,3,224,224))
         x = x.astype('float')/255.
-        print(model.predict(torch.Tensor(x)))
 
     loss_train_log = []
     loss_val_log = []
@@ -113,8 +113,8 @@ def train(opt):
        
     model = model.to(device)
 
-    if opt.DEBUG:
-        exit()
+    # if opt.DEBUG:
+    #     exit()
         
     # optimier
     g0, g1, g2 = [], [], [] #params group  #g0 - BatchNorm, g1 - weight, g2 - bias
@@ -141,7 +141,7 @@ def train(opt):
             class_weights = class_weights.to(device)
         else: 
             class_weights = None
-        criteriors.append(torch.nn.CrossEntropyLoss(weight=class_weights))
+        criteriors.append(FocalLoss(gamma=opt.gamma,class_weights=class_weights,label_smoothing=opt.label_smoothing))
 
     if not isinstance(opt.task_weights,list):
         task_weights = [opt.task_weights]
@@ -183,7 +183,11 @@ def train(opt):
                 preds = model(imgs)
                 loss = 0
                 for index,criterior in enumerate(criteriors):
-                    loss += opt.task_weights[index]*criterior(preds[index],labels[index])
+                    # LOGGER.debug(preds[index])
+                    # LOGGER.debug(labels[index])
+                    # exit()
+
+                    loss += opt.task_weights[index]*criterior(preds[index],labels[index])#,reduction='sum') / labels[index!=-1]
                 
                 optimizer.zero_grad()
                 loss.backward()
@@ -246,8 +250,8 @@ def train(opt):
 def parse_opt(know=True):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default='',help = 'weight path')
-    parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/human_attribute_2/train_config.yaml')
-    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/human_attribute_2/data_config.yaml')
+    parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/multi-task-classification/config/human_attribute_4/train_config.yaml')
+    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/multi-task-classification/config/human_attribute_4/data_config.yaml')
     parser.add_argument('--batch-size', type=int, default=128)
     parser.add_argument('--epochs', type=int, default=500)
     parser.add_argument('--patience', type=int, default=30, help='patience epoch for EarlyStopping')
@@ -267,5 +271,9 @@ if __name__ =='__main__':
     for k,v in data.items():
         setattr(opt,k,v) 
     assert isinstance(opt.classes,dict), "Invalid format of classes in data_config.yaml"
-    assert len(opt.task_weights) == len(opt.classes), "task weight should has the same length with classes"
+    # assert len(opt.task_weights) == len(opt.classes), "task weight should has the same length with classes"
+    if opt.DEBUG:
+        LOGGER.setLevel(logging.DEBUG)
+    else:
+        LOGGER.setLevel(logging.INFO)
     train(opt)

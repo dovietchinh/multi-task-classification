@@ -91,8 +91,8 @@ def parse_opt(know):
     parser.add_argument('--batch_size', type=int, default=64, help="batch size in evaluating")
     parser.add_argument('--device', type=str, default='', help="select gpu")
     parser.add_argument("--val_csv",type=str, default='',help='')
-    # parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/train_config.yaml')
-    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/M_classification_torch/config/default/data_config.yaml')
+    # parser.add_argument('--cfg',type=str,default='/u01/Intern/chinhdv/code/multi-task-classification/config/human_attribute_4/train_config.yaml')
+    parser.add_argument('--data',type=str,default='/u01/Intern/chinhdv/code/multi-task-classification/config/human_attribute_4/data_config.yaml')
     parser.add_argument("--logfile", type=str, default="log.evaluate.txt", help="log the evaluating result")
     opt = parser.parse_known_args()[0] if know else parser.parse_arg()
     return opt 

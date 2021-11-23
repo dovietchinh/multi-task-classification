@@ -14,24 +14,22 @@ model_name : 'mobilenet_v2'
 #   - shufflenet_v2_x0_5
 #   - shufflenet_v2_x1_0
 
-
 img_size : 224
 padding : False   # padding before resize for unsquare image
-weights : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_default/best.pt
-continue_training : False
-epochs: 500
-batch_size : 128
+weights : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_human_attributes_4/last.pt
+continue_training : True
+epochs: 1000
+batch_size : 64
 save_best: True
 device : cuda:0
-patience : 50    # For Early-Stopping
-save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_human_attributes_1  # save checkpoint
-
+patience : 500    # For Early-Stopping
+save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_human_attributes_4  # save checkpoint
 visualize: True
 
 gamma: 2                       # gamma = 0 equivalent CrossEntropy 
 label_smoothing : 0.2          # label_smoothing =0.0 equivalent hard label
 
-# sampling_balance_data : 500 # set True if sampling n sampling for each label in data
+# sampling_balance_data : 5000 # set True if sampling n sampling for each label in data
 
 hyp:   #hyper parameters
   lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3)
@@ -44,9 +42,9 @@ hyp:   #hyper parameters
   
 #augment params
 augment_params:
-  num_layers : 2
-  # augment_hsv : 
-  #   hgain : 0.5
+  num_layers : 3
+  # augment_hsv :  
+  #   hgain : 0.5 
   #   sgain : 0.5
   #   vgain : 0.5
   augment_RGB:
@@ -83,4 +81,4 @@ augment_params:
                     #in range(0,8) , 4 is no-augment
   contrast : #True               # mixup original image with a mean pixel-value image.     
 
-DEBUG : True
+DEBUG : False

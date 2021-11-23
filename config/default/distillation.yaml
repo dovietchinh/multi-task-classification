@@ -1,0 +1,10 @@
+models : [
+  { 
+    path : "../weights/model1.pt",
+    name : "mobilenet_v2",
+  },
+  {
+    path : "../weights/model2.pt",
+    name : "resnet_50",
+  }
+]

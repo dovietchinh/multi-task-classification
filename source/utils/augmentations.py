@@ -2,6 +2,16 @@ import numpy as np
 import cv2
 import random
 def preprocess(img,img_size,padding=True):
+    """[summary]
+
+    Args:
+        img (np.ndarray): images 
+        img_size (int,list,tuple): target size. eg: 224 , (224,224) or [224,224]
+        padding (bool): padding img before resize. Prevent from image distortion. Defaults to True.
+
+    Returns:
+        images (np.ndarray): images in target size
+    """
     if padding:
         height,width,_ = img.shape 
         delta = height - width 
@@ -284,9 +294,9 @@ class RandAugment:
         return img 
 
 def augmentation_test():
-    img_org = cv2.imread('/u01/Intern/chinhdv/code/M_classification_torch/test.jpg')
+    img_org = cv2.imread('test.jpg')
     import yaml
-    augment_params = yaml.safe_load(open('/u01/Intern/chinhdv/code/M_classification_torch/config/default/train_config.yaml')).get('augment_params')
+    augment_params = yaml.safe_load(open('config/default/train_config.yaml')).get('augment_params')
     augmenter = RandAugment(augment_params=augment_params)#(num_layers=1)
     for _ in range(10000):
         img_aug = augmenter(img_org)

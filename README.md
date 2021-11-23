@@ -106,12 +106,14 @@ This work was inspired by [ultralytics/yolov5](https://github.com/ultralytics/yo
 
         - [x] val-loss based-on.
 
-    - [ ] FixRes strategy. [detail](https://arxiv.org/pdf/1906.06423.pdf)
+    - [ ] FixRes strategy. see [7]
 
-    - [ ] Progressive learning with adaptive regularization. [detail](https://arxiv.org/pdf/2104.00298.pdf)
+    - [ ] Progressive learning with adaptive regularization. 
 
     - [ ] Multi-task Learning with Labeled and Unlabeled Tasks [detail](http://proceedings.mlr.press/v70/pentina17a/pentina17a.pdf)
 
+    - [ ] Knowledge distillation.
+    
 - [x] Data-format.
 
     - [x] Pandas-DataFrame.
@@ -263,12 +265,18 @@ Hope this work is helpful.
 
 ## Reference 
 
-[Deep Residual Learning for Image Recognition.](https://arxiv.org/abs/1512.03385)
+[1] [Deep Residual Learning for Image Recognition.](https://arxiv.org/abs/1512.03385)
 
-[MobileNetV2: Inverted Residuals and Linear Bottlenecks.](https://arxiv.org/abs/1801.04381)
+[2] [MobileNetV2: Inverted Residuals and Linear Bottlenecks.](https://arxiv.org/abs/1801.04381)
 
-[ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices.](https://arxiv.org/abs/1707.01083)
+[3] [ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices.](https://arxiv.org/abs/1707.01083)
 
-[EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.](https://arxiv.org/abs/1905.11946v1?fbclid=IwAR15HgcBlYsePX34qTK2aHti_GiucEYpQHjben-8wsTf7O83YPhrJQgXEJ0)
+[4] [EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks.](https://arxiv.org/abs/1905.11946v1?fbclid=IwAR15HgcBlYsePX34qTK2aHti_GiucEYpQHjben-8wsTf7O83YPhrJQgXEJ0)
 
+[5] [Rethinking the Inception Architecture for Computer Vision](https://arxiv.org/abs/1512.00567)
 
+[6] [Knowledge Distillation: A Survey](https://arxiv.org/abs/2006.05525)
+
+[7] [FixRes strategy.](https://arxiv.org/pdf/1906.06423.pdf)
+
+[8] [Progressive learning with adaptive regularization.](https://arxiv.org/pdf/2104.00298.pdf)
