@@ -4,10 +4,10 @@
 DATA_FOLDER : /u01/DATA/HUMAN_ATTRIBUTE/PA_100K/data
 
 train_csv : [
-    /u01/Intern/chinhdv/code/multi-task-classification/trainPA100K.csv
+    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/trainPA100K.csv
 ]
 val_csv : [
-    /u01/Intern/chinhdv/code/multi-task-classification/valPA100K.csv
+    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/valPA100K.csv
     ]
 
 classes:
