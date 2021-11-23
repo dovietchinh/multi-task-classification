@@ -7,6 +7,7 @@ from .augmentations import RandAugment
 import numpy as np 
 from .imbalance_data_handle import balance_data
 import pandas as pd
+import random
 LOGGER = logging.getLogger('__main__.'+__name__)
 
 def preprocess(img,img_size,padding=True):
@@ -61,11 +62,14 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
             # label = self.maping_name[label]
             labels.append(label)
         
+        if label!=1 and random.random() > 0.5:
+            img = img[::-1,:,:]
+            
         
-        if self.preprocess:
-            img = self.preprocess(img, img_size=self.img_size, padding=self.padding)
         if self.augment:
             img = self.augmenter(img)
+        if self.preprocess:
+            img = self.preprocess(img, img_size=self.img_size, padding=self.padding)
         img = np.transpose(img, [2,0,1])
         img = img.astype('float32')/255.
         return img,labels,path

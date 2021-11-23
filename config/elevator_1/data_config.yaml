@@ -1,0 +1,35 @@
+# DATA_FOLDER : /u01/Intern/chinhdv/DATA/milk/all_crop_data_origin
+# train_csv : /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_train_1103.csv
+# val_csv: /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_val_1103.csv
+DATA_FOLDER : /home/dovietchinh/code/thangmay/multi-task-classification/data/
+
+train_csv : [
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/data_elevator.csv
+]
+val_csv : [
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/data_elevator.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    /home/dovietchinh/code/thangmay/multi-task-classification/data/bending_down.csv,
+    ]
+
+classes:
+  label: [bending-down, human, object, bike]
+
+format_index: True
+
+task_weights : [1]
+class_weights:
+  label: [1,1,1,1]
+

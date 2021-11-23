@@ -85,11 +85,12 @@ class RandAugment:
             return np.fliplr(img)
         return img 
 
-    def augment_hsv(im, level=None, hgain=0.015, sgain=0.7, vgain=0.4):
+    def augment_hsv(im, level=None, hgain=0.000, sgain=0.0005, vgain=0.005):
         im = im.copy()
         # HSV color-space augmentation
         if hgain or sgain or vgain:
             r = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain] + 1  # random gains
+            r = np.array([hgain,sgain,vgain]) + 1
             hue, sat, val = cv2.split(cv2.cvtColor(im, cv2.COLOR_BGR2HSV))
             dtype = im.dtype  # uint8
 

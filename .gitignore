@@ -157,3 +157,5 @@ config/human_attribute_2
 config/human_attribute_3
 config/human_attribute
 human_attribute_project
+.gitignore
+data
