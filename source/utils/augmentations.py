@@ -48,6 +48,8 @@ class RandAugment:
             'cut_25_right': RandAugment.cut_25_right if augment_params.get('cut_25_right') else None,
             'cut_25_above': RandAugment.cut_25_above if augment_params.get('cut_25_above') else None,
             'cut_25_under': RandAugment.cut_25_under if augment_params.get('cut_25_under') else None,
+            'blur_img': RandAugment.blur_img if augment_params.get('blur_img') else None,
+            'center_crop': RandAugment.center_crop if augment_params.get('center_crop') else None,
             # 'random_crop':random_crop
         }
         self.ARGS_LIMIT = {
@@ -69,7 +71,9 @@ class RandAugment:
             'cut_25_left' : augment_params.get('cut_25_left'),
             'cut_25_right': augment_params.get('cut_25_right'),
             'cut_25_above': augment_params.get('cut_25_above'),
-            'cut_25_under': augment_params.get('cut_25_under')
+            'cut_25_under': augment_params.get('cut_25_under'),
+            'blur_img': augment_params.get('blur_img'),
+            'center_crop': augment_params.get('center_crop'),
             # 'random_crop':random_crop
         }
         self.policy = list(k for k,v in self.AUGMENT_FUNCTION.items() if v)
@@ -281,6 +285,20 @@ class RandAugment:
                     img2 = np.pad(img_,[[(width-height)//2,(width-height)//2],[0,0],[0,0]],mode='constant',constant_values=255)    
         img2 = cv2.resize(img2,(224,224))
         return img2    
+
+    def blur_img(img,level=10):
+        level = int(level)
+        ksize = (level,level)
+        image = cv2.blur(img, ksize) 
+        return image 
+
+    def center_crop(img,level=0.15):
+        height,width,_ = img.shape
+        
+        img = img[int(level*height):int((1-level)*height), int(level*width):int((1-level)*width)]
+        return img
+
+
     def __call__(self,img):
         augmenters = random.choices(self.policy, k=self.num_layers)
         for augmenter in augmenters:

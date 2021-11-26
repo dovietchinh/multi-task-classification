@@ -62,8 +62,8 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
             # label = self.maping_name[label]
             labels.append(label)
         
-        if label!=1 and random.random() > 0.5:
-            img = img[::-1,:,:]
+        # if label!=1 and random.random() > 0.5:
+        #     img = img[::-1,:,:]
             
         
         if self.augment:

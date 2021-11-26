@@ -69,9 +69,10 @@ augment_params:
   cut_25_above: [0.05,0.25]
   cut_25_under: [0.05,0.25]
   cutout: [0.1,0.3]
+  center_crop : [0.1, 0.2]
 
 # photometric augmentation
-
+  blur_img : [5, 15] #k_size 
   hist_equalize : [1,1]
   invert :                 # return 255 - image
   mix_up_gray_scale : True      # convert img to grayscale and mixup with original image.
@@ -81,6 +82,6 @@ augment_params:
   #If the value is less than the threshold.Otherwise, subtract 255 from the pixel.
   posterize:        # shift right bit values and left shift ( equivalent clip value ) it so strong augment 
                     #in range(0,8) , 4 is no-augment
-  contrast : #True               # mixup original image with a mean pixel-value image.     
+  contrast : [0.3, 0.7]               # mixup original image with a mean pixel-value image.     
 
 DEBUG : True
