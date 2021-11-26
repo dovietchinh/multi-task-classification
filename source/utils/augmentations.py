@@ -50,6 +50,7 @@ class RandAugment:
             'cut_25_under': RandAugment.cut_25_under if augment_params.get('cut_25_under') else None,
             'blur_img': RandAugment.blur_img if augment_params.get('blur_img') else None,
             'center_crop': RandAugment.center_crop if augment_params.get('center_crop') else None,
+            'augment_RGB': RandAugment.augment_RGB if augment_params.get('augment_RGB') else None,
             # 'random_crop':random_crop
         }
         self.ARGS_LIMIT = {
@@ -74,7 +75,7 @@ class RandAugment:
             'cut_25_under': augment_params.get('cut_25_under'),
             'blur_img': augment_params.get('blur_img'),
             'center_crop': augment_params.get('center_crop'),
-            # 'random_crop':random_crop
+            'augment_RGB': augment_params.get('augment_RGB')
         }
         self.policy = list(k for k,v in self.AUGMENT_FUNCTION.items() if v)
         # print(self.policy)
@@ -298,7 +299,19 @@ class RandAugment:
         img = img[int(level*height):int((1-level)*height), int(level*width):int((1-level)*width)]
         return img
 
+    def augment_RGB(img, level=0.5):
+        R_gain,G_gain,B_gain = np.random.uniform(-1, 1, 3) * [level, level, level]
+        B,G,R = cv2.split(img)
+        B = B.astype('float')*(1+B_gain)
+        G = G.astype('float')*(1+G_gain)
+        R = R.astype('float')*(1+R_gain)
+        
+        B = np.clip(B,0,255).astype('uint8')
+        G = np.clip(G,0,255).astype('uint8')
+        R = np.clip(R,0,255).astype('uint8')
 
+        image = cv2.merge((B,G,R))
+        return image
     def __call__(self,img):
         augmenters = random.choices(self.policy, k=self.num_layers)
         for augmenter in augmenters:
