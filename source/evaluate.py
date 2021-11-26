@@ -16,7 +16,8 @@ LOGGER.setLevel(logging.INFO)
 logging.basicConfig()
 
 def evaluate(opt):
-    
+    if not hasattr(opt, 'VAL_FOLDER'):
+        opt.VAL_FOLDER = opt.TRAIN_FOLDER
     if isinstance(opt.val_csv,str):
         opt.val_csv = [opt.val_csv]
     df_val = []
@@ -40,7 +41,7 @@ def evaluate(opt):
     
     
     ds_val = LoadImagesAndLabels(df_val,
-                                data_folder=opt.DATA_FOLDER,
+                                data_folder=opt.VAL_FOLDER,
                                 img_size = img_size,
                                 padding= padding,
                                 classes = opt.classes,
@@ -73,10 +74,10 @@ def evaluate(opt):
                 y_pred[j].append(preds[j])
     y_true = [ np.concatenate(x, axis=0) for x in y_true ]
     y_pred = [ np.concatenate(x, axis=0) for x in y_pred ]
-    LOGGER.debug(f"y_true[0]_len = {len(y_true[0])}")
-    LOGGER.debug(f"y_true[1]_len = {len(y_true[1])}")
-    LOGGER.debug(f"y_pred[0]_len = {len(y_pred[0])}")
-    LOGGER.debug(f"y_pred[1]_len = {len(y_true[1])}")
+    # LOGGER.debug(f"y_true[0]_len = {len(y_true[0])}")
+    # LOGGER.debug(f"y_true[1]_len = {len(y_true[1])}")
+    # LOGGER.debug(f"y_pred[0]_len = {len(y_pred[0])}")
+    # LOGGER.debug(f"y_pred[1]_len = {len(y_true[1])}")
     for i,(k,v) in enumerate(opt.classes.items()):
         fi = sklearn.metrics.classification_report(y_true[i],y_pred[i],digits=4,zero_division=1,target_names=v)
         with open(opt.logfile,'a') as f:

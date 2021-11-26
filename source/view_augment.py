@@ -79,4 +79,5 @@ if __name__ =='__main__':
         LOGGER.setLevel(logging.DEBUG)
     else:
         LOGGER.setLevel(logging.INFO)
+    print(opt.padding)
     view_augment(opt)

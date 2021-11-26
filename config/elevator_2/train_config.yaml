@@ -23,8 +23,8 @@ batch_size : 64
 save_best: True
 device : cuda:0
 patience : 500    # For Early-Stopping
-save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_elevator  # save checkpoint
-visualize: True
+save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_elevator_2  # save checkpoint
+visualize: False
 
 gamma: 2                       # gamma = 0 equivalent CrossEntropy 
 label_smoothing : 0.2         # label_smoothing =0.0 equivalent hard label

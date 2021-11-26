@@ -32,12 +32,21 @@ def train(opt):
 
 
     # read val_csv
-    df_val = []
-    if isinstance(opt.val_csv,str):
-        opt.val_csv = [opt.val_csv]
-    for file in opt.val_csv:
-        df_val.append(pd.read_csv(file))
-    df_val = pd.concat(df_val,axis=0)
+    if hasattr(opt,'val_csv'):
+        df_val = []
+        if isinstance(opt.val_csv,str):
+            opt.val_csv = [opt.val_csv]
+        for file in opt.val_csv:
+            df_val.append(pd.read_csv(file))
+        df_val = pd.concat(df_val,axis=0)
+    else:
+        df_train = df_train.sample(frac=1).reset_index(drop=True)
+        len_ = len(df_train)
+        df_val = df_train[int(0.8*len_):]
+        df_train = df_train[:int(0.8*len_)]
+
+    if not hasattr(opt, 'VAL_FOLDER'):
+        opt.VAL_FOLDER = opt.TRAIN_FOLDER
 
     device = select_device(opt.device,model_name=opt.model_name)
 
@@ -48,7 +57,7 @@ def train(opt):
 
     cuda = device.type != 'cpu'
     ds_train = LoadImagesAndLabels(df_train,
-                                data_folder=opt.DATA_FOLDER,
+                                data_folder=opt.TRAIN_FOLDER,
                                 img_size = opt.img_size,
                                 padding = opt.padding,
                                 classes = opt.classes,
@@ -58,7 +67,7 @@ def train(opt):
                                 augment_params=opt.augment_params)
 
     ds_val = LoadImagesAndLabels(df_val,
-                                data_folder=opt.DATA_FOLDER,
+                                data_folder=opt.VAL_FOLDER,
                                 img_size = opt.img_size,
                                 padding= opt.padding,
                                 classes = opt.classes,
@@ -152,7 +161,7 @@ def train(opt):
     #     # lf = one_cycle(1, opt.hyp['lrf'], epochs)
     #     pass
 
-    stopper = EarlyStoping(best_fitness=best_fitness, best_epoch=best_epoch, patience=opt.patience,ascending=False)
+    stopper = EarlyStoping(best_fitness=best_fitness, best_epoch=best_epoch, patience=opt.patience,ascending=True)
     
     pbar_epoch = tqdm(range(start_epoch,opt.epochs),total=opt.epochs,initial=start_epoch)
     for epoch in pbar_epoch:
@@ -161,6 +170,7 @@ def train(opt):
             loader['train'].dataset.on_epoch_end(n=opt.sampling_balance_data)
         
         model.train()
+        # model.requires_grad=True
         pbar = enumerate(loader['train'])
         nb = len(loader['train'])
         epoch_loss = 0.0
@@ -181,15 +191,16 @@ def train(opt):
             
             with torch.set_grad_enabled(cuda):
                 preds = model(imgs)
-                loss = 0
+                # loss = torch.Tensor([0])
+                loss= 0
                 for index,criterior in enumerate(criteriors):
                     # LOGGER.debug(preds[index])
                     # LOGGER.debug(labels[index])
                     # exit()
-
                     loss += opt.task_weights[index]*criterior(preds[index],labels[index])#,reduction='sum') / labels[index!=-1]
-                
+
                 optimizer.zero_grad()
+                # print(loss)
                 loss.backward()
                 optimizer.step()    
                 epoch_loss += loss * imgs.size(0)
@@ -199,7 +210,11 @@ def train(opt):
         # evaluate phase.
         model.eval()
         epoch_loss = 0
-        
+        y_true = [] 
+        y_pred = [] 
+        for _ in range(len(opt.classes)):
+            y_true.append([])
+            y_pred.append([])
         with torch.no_grad():
             for i, (imgs, labels, _) in tqdm(enumerate(loader['val']),total=len(loader['val']),desc='evaluating',leave=False):
                 imgs = imgs.to(device)
@@ -209,16 +224,24 @@ def train(opt):
                 for index,criterior in enumerate(criteriors):
                     loss += opt.task_weights[index]*criterior(preds[index],labels[index])                      
                 epoch_loss += loss * imgs.size(0) # imgs.size = batch_size
+                labels = [label.to(device).cpu().numpy().ravel() for label in labels]
+            # LOGGER.info(f'len_labels: {len(labels[0])}')
+                preds = [x.detach().cpu().numpy().argmax(axis=-1).ravel() for x in preds]
+                for j in range(len(opt.classes)):
+                    y_true[j].append(labels[j])
+                    y_pred[j].append(preds[j])
+        y_true = [ np.concatenate(x, axis=0) for x in y_true ]
+        y_pred = [ np.concatenate(x, axis=0) for x in y_pred ]
         epoch_loss = epoch_loss/len(loader['val'].dataset)
         loss_val_log.append(epoch_loss)
         
         # fi - macro avg accuracy
 
-        # fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
-        # fi = fi.split('\n')[-3].split()[-2]
-        # fi = float(fi)
+        fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
+        fi = fi.split('\n')[-3].split()[-2]
+        fi = float(fi)
 
-        fi = epoch_loss.item()
+        # fi = epoch_loss.item()
 
         if stopper(epoch,fi):   #if EarlyStopping condition meet
             break

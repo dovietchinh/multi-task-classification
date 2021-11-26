@@ -16,9 +16,9 @@ def preprocess(img,img_size,padding=True):
         delta = height - width 
         
         if delta > 0:
-            img = np.pad(img,[[0,0],[delta//2,delta//2],[0,0]], mode='constant',constant_values =255)
+            img = np.pad(img,[[0,0],[delta//2,delta//2],[0,0]], mode='constant',constant_values =0)
         else:
-            img = np.pad(img,[[-delta//2,-delta//2],[0,0],[0,0]], mode='constant',constant_values =255)
+            img = np.pad(img,[[-delta//2,-delta//2],[0,0],[0,0]], mode='constant',constant_values =0)
     if isinstance(img_size,int):
         img_size = (img_size,img_size)
     return cv2.resize(img,img_size)

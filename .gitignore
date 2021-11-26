@@ -159,3 +159,5 @@ config/human_attribute
 human_attribute_project
 .gitignore
 data
+Vitis-AI
+mount_point/

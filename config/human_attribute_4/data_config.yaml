@@ -7,7 +7,8 @@ train_csv : [
     /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/trainPA100K.csv
 ]
 val_csv : [
-    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/valPA100K.csv
+    # /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/valPA100K.csv
+    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/human_attribute_test.csv
     ]
 
 classes:
