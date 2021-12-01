@@ -21,7 +21,12 @@ def preprocess(img,img_size,padding=True):
             img = np.pad(img,[[-delta//2,-delta//2],[0,0],[0,0]], mode='constant',constant_values =0)
     if isinstance(img_size,int):
         img_size = (img_size,img_size)
-    return cv2.resize(img,img_size)
+    try:    
+        result = cv2.resize(img,img_size)
+    except:
+        result = img
+        print(img.shape)
+    return result
 
 class LoadImagesAndLabels(torch.utils.data.Dataset):
     
@@ -51,7 +56,11 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
 
     def __getitem__(self, index,):
         item = self.csv.iloc[index]
-        path = os.path.join(self.data_folder, item.path)
+        try:
+            path = os.path.join(self.data_folder, item.path)
+        except:
+            print(item)
+            exit()
         assert os.path.isfile(path),f'this image : {path} is corrupted'
         img = cv2.imread(path, cv2.IMREAD_COLOR)
         if img is None:
@@ -67,7 +76,10 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
             
         
         if self.augment:
-            img = self.augmenter(img)
+            try:
+                img = self.augmenter(img)
+            except:
+                pass
         if self.preprocess:
             img = self.preprocess(img, img_size=self.img_size, padding=self.padding)
         img = np.transpose(img, [2,0,1])

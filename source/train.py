@@ -102,7 +102,7 @@ def train(opt):
 
     loss_train_log = []
     loss_val_log = []
-    best_fitness,best_epoch = 0,0
+    best_fitness,best_epoch = 999999,0
     start_epoch = 0
     if os.path.isfile(opt.weights):                    # load from checkpoint
         LOGGER.info(f' loading pretrain from {opt.weights}')
@@ -161,7 +161,7 @@ def train(opt):
     #     # lf = one_cycle(1, opt.hyp['lrf'], epochs)
     #     pass
 
-    stopper = EarlyStoping(best_fitness=best_fitness, best_epoch=best_epoch, patience=opt.patience,ascending=True)
+    stopper = EarlyStoping(best_fitness=best_fitness, best_epoch=best_epoch, patience=opt.patience,ascending=False)
     
     pbar_epoch = tqdm(range(start_epoch,opt.epochs),total=opt.epochs,initial=start_epoch)
     for epoch in pbar_epoch:
@@ -237,11 +237,11 @@ def train(opt):
         
         # fi - macro avg accuracy
 
-        fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
-        fi = fi.split('\n')[-3].split()[-2]
-        fi = float(fi)
+        # fi = sklearn.metrics.classification_report(y_true,y_pred,digits=4,zero_division=1)
+        # fi = fi.split('\n')[-3].split()[-2]
+        # fi = float(fi)
 
-        # fi = epoch_loss.item()
+        fi = epoch_loss.item()
 
         if stopper(epoch,fi):   #if EarlyStopping condition meet
             break

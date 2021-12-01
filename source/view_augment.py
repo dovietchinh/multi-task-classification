@@ -21,7 +21,7 @@ def view_augment(opt):
 
 
     ds_train = LoadImagesAndLabels(df_train,
-                                data_folder=opt.DATA_FOLDER,
+                                data_folder=opt.TRAIN_FOLDER,
                                 img_size = opt.img_size,
                                 padding = opt.padding,
                                 classes = opt.classes,
