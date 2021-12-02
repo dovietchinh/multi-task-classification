@@ -297,6 +297,7 @@ class RandAugment:
         height,width,_ = img.shape
         
         img = img[int(level*height):int((1-level)*height), int(level*width):int((1-level)*width)]
+        img = cv2.resize(img,(width,height))
         return img
 
     def augment_RGB(img, level=0.5):
@@ -314,6 +315,7 @@ class RandAugment:
         return image
     def __call__(self,img):
         augmenters = random.choices(self.policy, k=self.num_layers)
+        # print(augmenters)
         for augmenter in augmenters:
             level = random.random()
             # try:

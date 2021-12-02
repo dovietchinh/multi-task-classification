@@ -1,0 +1,43 @@
+TRAIN_FOLDER : data
+
+train_csv : [
+    /u01/Intern/chinhdv/code/multi-task-classification/elevator_project/new_train.csv,
+    /u01/Intern/chinhdv/code/multi-task-classification/elevator_project/new_collect.csv,
+    /u01/Intern/chinhdv/code/multi-task-classification/elevator_project/hmat2elevator.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+    # /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+]
+# val_csv : [
+#     /u01/Intern/chinhdv/DATA/thangmay/data/data_elevator.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     /u01/Intern/chinhdv/DATA/thangmay/data/bending_down.csv,
+#     ]
+# VAL_FOLDER:  /u01/Intern/chinhdv/code/multi-task-classification/mount_point/truck_classification
+# val_csv : [
+#     /u01/Intern/chinhdv/code/multi-task-classification/mount_point/truck_classification/thangmay_files/data/test.csv
+# ]
+
+classes:
+  # label: [bending-down, human, object, bike]
+  label : [human, object]
+
+format_index: True
+
+task_weights : [1]
+class_weights:
+  # label: [2,1,1,1]
+  label: [1,2]
+
