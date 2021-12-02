@@ -64,7 +64,8 @@ def train(opt):
                                 format_index = opt.format_index,
                                 preprocess=preprocess,
                                 augment=True,
-                                augment_params=opt.augment_params)
+                                augment_params_0=opt.augment_params_0,
+                                augment_params_1=opt.augment_params_1)
 
     ds_val = LoadImagesAndLabels(df_val,
                                 data_folder=opt.VAL_FOLDER,
