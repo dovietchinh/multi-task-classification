@@ -84,7 +84,7 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
         #     img = img[::-1,:,:]
         if self.preprocess:
             img = self.preprocess(img, img_size=self.img_size, padding=self.padding)
-        print(img.shape)
+        
         if self.augment:
             # img = self.augmenter(img)
             if label==0:
@@ -135,11 +135,6 @@ class LoadImagesAndLabels(torch.utils.data.Dataset):
                     # print('line137',img.shape)
                 else:
                     img = self.augmenter_1(img)
-        print(img.shape)
-        if img.shape != (224,224,3):
-            # np.save('img.npy',img)
-            print(path)
-            exit()
         img = np.transpose(img, [2,0,1])
         img = img.astype('float32')/255.
         return img,labels,path
