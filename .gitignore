@@ -153,9 +153,9 @@ test_PA100K
 testasd
 preprocessing.py
 script.py
-config/human_attribute_2
-config/human_attribute_3
-config/human_attribute
+# config/human_attribute_2
+# config/human_attribute_3
+# config/human_attribute
 human_attribute_project
 .gitignore
 data
@@ -163,3 +163,5 @@ Vitis-AI
 mount_point/
 *.sh
 *.jpg
+.gitignore
+elevator_project/

@@ -16,18 +16,18 @@ model_name : 'mobilenet_v2'
 
 img_size : 224
 padding : False   # padding before resize for unsquare image
-# weights : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_elevator_5/last.pt
+# weights : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_human_attributes_4/last.pt
 continue_training : False
 epochs: 1000
 batch_size : 64
 save_best: True
 device : cuda:0
 patience : 500    # For Early-Stopping
-save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_elevator_5_2  # save checkpoint
+save_dir : /u01/Intern/chinhdv/code/multi-task-classification/result/runs_human_attributes_6  # save checkpoint
 visualize: True
 
 gamma: 2                       # gamma = 0 equivalent CrossEntropy 
-label_smoothing : 0.2         # label_smoothing =0.0 equivalent hard label
+label_smoothing : 0.2          # label_smoothing =0.0 equivalent hard label
 
 # sampling_balance_data : 5000 # set True if sampling n sampling for each label in data
 
@@ -81,47 +81,5 @@ augment_params_0:
   posterize:  #[3,5]      # shift right bit values and left shift ( equivalent clip value ) it so strong augment 
                     #in range(0,8) , 4 is no-augment
   contrast : #True               # mixup original image with a mean pixel-value image.     
-
-augment_params_1:
-  num_layers : 4
-  # augment_hsv :  [0.5, 0.5]
-    # hgain : [0.5 ,0.5]
-    # sgain : [0.5 ,0.5]
-    # vgain : [0.5 ,0.5]
-  augment_RGB: [0.3,0.5]
-      # R_gain: [0.5,1.5]
-      # G_gain: [0.5,1.5]
-      # B_gain: [0.5,1.5]
-
-# geometric augmentation
-
-  fliplr: [0.5 ,0.5]
-  rotate: [-20,20 ]
-
-  shearX : [-0.1, 0.1 ]
-  shearY : [-0.1, 0.1 ]
-  translateX : [-0.1, 0.1]
-  translateY : [-0.1, 0.1]
-  Sharpness : 
-  cut_25_left: [0.05, 0.1]
-  cut_25_right: [0.05, 0.1]
-  cut_25_above: [0.05, 0.1]
-  cut_25_under: [0.05, 0.1]
-  cutout: [0.1, 0.3]
-  center_crop : [0.2, 0.4]
-# photometric augmentation
-
-  blur_img : [5, 10]
-  hist_equalize : [1,1]
-  invert :                 # return 255 - image
-  mix_up_gray_scale : True      # convert img to grayscale and mixup with original image.
-  adjust_brightness : [0.5, 1.5]   # mixup with white img
-  solarize : #[100,200]
-  # For each pixel in the image, select the pixel. 
-  #If the value is less than the threshold.Otherwise, subtract 255 from the pixel.
-  posterize:  #[3,5]      # shift right bit values and left shift ( equivalent clip value ) it so strong augment 
-                    #in range(0,8) , 4 is no-augment
-  contrast : #True               # mixup original image with a mean pixel-value image.     
-
-
+  
 DEBUG : False

@@ -1,0 +1,59 @@
+# DATA_FOLDER : /u01/Intern/chinhdv/DATA/milk/all_crop_data_origin
+# train_csv : /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_train_1103.csv
+# val_csv: /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_val_1103.csv
+# TRAIN_FOLDER : /u01/DATA/HUMAN_ATTRIBUTE/PA_100K/data
+TRAIN_FOLDER : /u01/Intern/chinhdv/github/auto_upload_cvat/hmat
+
+train_csv : [
+    # /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/trainPA100K.csv,
+    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/0712_hmat.csv
+]
+# val_csv : [
+#     # /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/trainPA100K.csv,
+#     /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/0812_hmat_test.csv
+# ]
+# val_csv : [
+#     # /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/valPA100K.csv
+#     /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/human_attribute_test.csv
+#     ]
+
+classes:
+  age         : [0-18, 18-55, 55+] 
+  gender      : [female, male]
+#   shape       : [thin,fat,kid]
+  hair        : [short_hair, long_hair]
+  hat         : ["no", "yes"]
+  glasses     : ["no", "yes"]
+  face_mask   : ["no", "yes"]
+  body_pose   : [front_pose, side_pose, turn_back_pose]
+  visible     : [fullbody, upperbody]
+  backpack    : ["no", "yes"]
+  handbag     : ["no", "yes"]
+  ub_length   : [short, long]
+  lb_length   : [short, long]
+  # action      : ['sitting','standing']
+  holding_object: ["no", "yes"]
+#   crowd       : ["yes","no"]
+
+
+# age, gender, shape, hair, hat, glasse
+
+
+format_index: True
+
+task_weights : [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+# task_weights : 1
+class_weights:
+    age: [3,1,6]
+    gender: [1,1]
+    hair: [1,4]
+    hat         : [1, 1]
+    face_mask   : [1, 4]
+    glasses     : [1, 3]
+    visible     : [1,1]
+    body_pose   : [1, 1, 1]
+    backpack    : [1, 4]
+    handbag     : [1, 4]
+    ub_length   : [1, 1]
+    lb_length   : [1, 1]
+    holding_object: [1, 4]

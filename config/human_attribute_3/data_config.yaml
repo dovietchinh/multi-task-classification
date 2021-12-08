@@ -1,0 +1,69 @@
+# DATA_FOLDER : /u01/Intern/chinhdv/DATA/milk/all_crop_data_origin
+# train_csv : /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_train_1103.csv
+# val_csv: /u01/Intern/chinhdv/code/M_classification_torch/config/a/76classes_val_1103.csv
+TRAIN_FOLDER : /u01/Intern/chinhdv/github/auto_upload_cvat/hmat
+
+train_csv : [
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0001.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0002.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0003.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0004.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0005.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0006.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0011.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0012.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0013.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0014.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0015.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0021.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0022.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0023.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0024.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0025.csv,
+    /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0026.csv,
+]
+val_csv : [
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0001.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0002.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0003.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0004.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0005.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0006.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0011.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0012.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0013.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0014.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0015.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0021.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0022.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0023.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0024.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0025.csv,
+    # /u01/Intern/chinhdv/github/auto_upload_cvat/new_human/New_Human_Attributes_task_0026.csv,
+    /u01/Intern/chinhdv/code/multi-task-classification/human_attribute_project/0812_hmat_test.csv
+    ]
+
+classes:
+  age         : [0-18, 18-55, 55+] 
+  gender      : [female, male]
+  shape       : [thin,fat,kid]
+  hair        : [long_hair, short_hair, bald, none]
+  hat         : ["yes", "no"]
+  glasses     : [sunglasses, normal, none]
+  face_mask   : ["yes", "no"]
+  body_pose   : [front_pose, left_pose, right_pose, turn_back_pose]
+  visible     : [upperbody, fullbody, none]
+  backpack    : ["yes","no"]
+  handbag     : ["yes","no"]
+  ub_length   : [long, short, none]
+  lb_length   : [long, short, none]
+  action      : [standing, sitting, bending-down, other]
+  holding_baby: ["yes","no"]
+  crowd       : ["yes","no"]
+
+format_index: True
+
+task_weights : 1
+class_weights:
+    age: [5,1,5]
+    gender: [1,1]
