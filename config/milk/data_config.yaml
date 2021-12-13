@@ -1,6 +1,6 @@
-DATA_FOLDER : all_crop_data_origin
-train_csv : config/a/76classes_train_1103.csv
-val_csv: config/a/76classes_val_1103.csv
+DATA_FOLDER : YOUR_PATH/all_crop_data_origin
+train_csv : config/milk/76classes_train_1103.csv
+val_csv: config/milk/76classes_val_1103.csv
 
 
 nc : 76 # number classes ( if multi-output specific number_classes in a list. eg: [2,4,5])

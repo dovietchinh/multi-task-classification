@@ -143,3 +143,8 @@ result_origin/
 result/
 *.jpg
 *.png 
+mount_point/
+human_attribute_project/
+elevator_project/
+Vitis-AI/
+.gitignore

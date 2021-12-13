@@ -29,6 +29,7 @@ def predict_merge_model(model, img):
 if __name__ =='__main__':
     device = torch.device('cuda:0')
     model = load_model(path='result/runs_m/last.pt',device=device)
-    img = cv2.imread('/u01/Intern/chinhdv/DATA/milk/all_crop_data_origin/abbott/abbott_grow/abbott_grow_1/0000.jpg')
-    out = predict_merge_model(model,img)
-    print(out)
+    img = cv2.imread('all_crop_data_origin/abbott/abbott_grow/abbott_grow_1/0000.jpg')
+    class_index, score = predict_merge_model(model,img)
+    print(class_index)
+    print(score)

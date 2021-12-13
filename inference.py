@@ -18,13 +18,13 @@ def preprocess(img,img_size,padding=True):
         img_size = (img_size,img_size)
     return cv2.resize(img,img_size)
 		
-folder = '...'
+folder = '/u01/Intern/chinhdv/DATA/milk/all_crop_data_origin'
 
 model = MobileNetV2(76)
 model.load_state_dict(torch.load('result/runs_m/last.pt')['state_dict'])
 model.eval()
 index = 0
-with open('config/milk/1103.json') as f:
+with open('1103.json') as f:
 	labels= json.load(f)
 for root,dirs,files in os.walk(folder):
 	for file in files:

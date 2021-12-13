@@ -15,11 +15,11 @@ model_name : 'mobilenet_v2'
 
 img_size : 224
 padding : True
-# weights : result/runs_m/last.pt
+weights : result/runs_m/last.pt
 
 continue_training : False
 epochs: 500
-batch_size : 128
+batch_size : 64
 save_best: True
 device : cuda:0
 patience : 100    # For Early-Stopping

@@ -24,8 +24,8 @@ def train(opt):
         df_train = df_train[:100]
         df_val = df_val[:100]
     device = select_device(opt.device,model_name=opt.model_name)
-    visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
-    visualize(df_val,classes=opt.classes,save_dir=opt.save_dir,dataset_name='val')
+    # visualize(df_train,classes=opt.classes,save_dir=opt.save_dir,dataset_name='train')
+    # visualize(df_val,classes=opt.classes,save_dir=opt.save_dir,dataset_name='val')
     
     cuda = device.type != 'cpu'
     ds_train = LoadImagesAndLabels(df_train,
